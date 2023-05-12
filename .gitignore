@@ -4,6 +4,7 @@
 /dist
 /temp
 /**/config/**/*.example.json
+/**/config/**/paused.json
 
 # =====================================================
 # Node.js
