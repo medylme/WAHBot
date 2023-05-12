@@ -52,7 +52,18 @@ export class StartAuctionCommand implements Command {
 
     public async execute(intr: ChatInputCommandInteraction, _data: EventData): Promise<void> {
         const channel: TextChannel = intr.channel as TextChannel;
-        let pauseData: Partial<ResumeData> = {};
+        let pauseData: ResumeData = {
+            auctionState: undefined,
+            auctionStats: undefined,
+            currentPlayerIndex: undefined,
+            captains: undefined,
+            shuffledPlayers: {
+                1: undefined,
+                2: undefined,
+                3: undefined,
+                4: undefined,
+            },
+        };
 
         // Load Configs
         let PlayersData: PlayersList = require('../../../config/tournament/players.json');
@@ -112,8 +123,9 @@ export class StartAuctionCommand implements Command {
         let resuming = fs.existsSync('./config/tournament/paused.json');
         // Check if a paused.json file exists in the tournament folder
         if (resuming) {
+            let PausedStateFile = require('../../../config/tournament/paused.json');
             try {
-                const resumeData = require('./config/tournament/paused.json') as ResumeData;
+                const resumeData = PausedStateFile as ResumeData;
                 Logger.info(`'resume.json' found, resuming auction from file...`);
 
                 initialTierIndex = resumeData.auctionState.currentTierIndex;
@@ -122,20 +134,20 @@ export class StartAuctionCommand implements Command {
                     PlayersData[key] = shuffledPlayers[key];
                 }
                 currentPlayerIndex = resumeData.currentPlayerIndex;
-
+                resumeData.auctionState.status = 'running';
                 await StateUtils.ResumeAuction(resumeData);
 
                 startingAnnouncementEmbed
-                    .setColor(RandomUtils.getTertiaryColor())
+                    .setColor(RandomUtils.getPrimaryColor())
                     .setTitle('Auction resuming.')
                     .setDescription('The auction will be resumed shortly!');
             } catch (e) {
-                Logger.error(`Error reading resume file, please check or delete the file.`);
+                Logger.error(`Error reading resume file, please check or delete the file.`, e);
                 return;
             }
         } else {
             startingAnnouncementEmbed
-                .setColor(RandomUtils.getTertiaryColor())
+                .setColor(RandomUtils.getPrimaryColor())
                 .setTitle('Auction starting!')
                 .setDescription(
                     'The auction will be starting shortly, \n\n**Captains:** Make sure you have read `/help auction`!'
@@ -353,6 +365,9 @@ export class StartAuctionCommand implements Command {
                         }** player(s) left in this tier (make sure you get at least one)!`
                     );
                 } else {
+                    // Add player to winner's team
+                    StateUtils.SellPlayer();
+
                     const highestBid = highestBidObject.bid;
                     const highestBidder = highestBidObject.bidderName;
                     const soldThreadEmbed = new EmbedBuilder()
@@ -373,14 +388,15 @@ export class StartAuctionCommand implements Command {
                     await thread.send({ embeds: [soldThreadEmbed] });
 
                     await mainChannelMessage.edit(
-                        `**${username}** has been sold to **${highestBidder}** for **${highestBid}**! \nThere are **${
+                        `**${username}** has been sold to **${highestBidder}** for **${highestBid}** points! \nThere are **${
                             playerList.length - i - 1
-                        }** player(s) left in this tier (make sure you get at least one)!`
+                        }** player(s) left in this tier (make sure you get at least one).`
                     );
                 }
 
-                // Add player to winner's team
-                StateUtils.SellPlayer();
+                if (i === playerList.length - 1) {
+                    pauseData.currentPlayerIndex = 0;
+                }
 
                 await delay(10 * 1000);
                 await thread.setArchived(true);
@@ -391,17 +407,14 @@ export class StartAuctionCommand implements Command {
         switch (await StateUtils.getStatus()) {
             case 'pausing':
                 Logger.debug('Writing pausing state...');
-
                 pauseData.auctionState = await StateUtils.getState();
                 pauseData.auctionStats = await StateUtils.GetAuctionStats();
-                for (let i = 0; i < AuctionConfig.tierOrder.length; i++) {
-                    pauseData.shuffledPlayers[i + 1] = PlayersData[i + 1];
+                for (const key in PlayersData) {
+                    pauseData.shuffledPlayers[key] = PlayersData[key];
                 }
+                pauseData.auctionState.status = 'idle';
                 try {
-                    await writeToFile(
-                        './config/tournament/paused.json',
-                        JSON.stringify(pauseData as ResumeData)
-                    );
+                    await writeToFile('./config/tournament/paused.json', JSON.stringify(pauseData));
 
                     StateUtils.resetAuctionStateValues();
 
