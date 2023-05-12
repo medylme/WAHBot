@@ -413,6 +413,7 @@ export class StartAuctionCommand implements Command {
                     pauseData.shuffledPlayers[key] = PlayersData[key];
                 }
                 pauseData.auctionState.status = 'idle';
+                pauseData.captains = await StateUtils.GetAuctionResults();
                 try {
                     await writeToFile('./config/tournament/paused.json', JSON.stringify(pauseData));
 
