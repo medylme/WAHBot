@@ -28,14 +28,24 @@ export class PauseAuctionCommand implements Command {
     ];
 
     public async execute(intr: ChatInputCommandInteraction, _data: EventData): Promise<void> {
-        if ((await StateUtils.getStatus()) !== 'running') {
-            const notOngoingEmbed = new EmbedBuilder()
-                .setColor(RandomUtils.getErrorColor())
-                .setTitle('No ongoing auction')
-                .setDescription('There is no ongoing auction to pause.');
+        const notOngoingEmbed = new EmbedBuilder().setColor(RandomUtils.getErrorColor());
+        switch (await StateUtils.getStatus()) {
+            case 'running':
+                break;
+            case 'paused':
+                notOngoingEmbed
+                    .setTitle('Already pausing!')
+                    .setDescription('The auction is already queued to pause.');
 
-            await InteractionUtils.send(intr, notOngoingEmbed);
-            return;
+                await InteractionUtils.send(intr, notOngoingEmbed);
+                return;
+            default:
+                notOngoingEmbed
+                    .setTitle('No ongoing auction')
+                    .setDescription('There is no ongoing auction to pause.');
+
+                await InteractionUtils.send(intr, notOngoingEmbed);
+                return;
         }
 
         const confirmEmbed = new EmbedBuilder()
