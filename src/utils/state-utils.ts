@@ -1,0 +1,286 @@
+import { createRequire } from 'node:module';
+
+import { Logger } from '../services/logger.js';
+
+const require = createRequire(import.meta.url);
+const auctionConfig = require('../../config/tournament/config.json');
+
+export interface AuctionState {
+    status: string;
+    currentTierIndex: number;
+    currentPlayer: string;
+    currentPlayerName: string;
+    currentThreadId: string;
+    biddingActive: boolean;
+    timeRemaining: number;
+    highestBid: number;
+    highestBidderId: string;
+    currentAuctionChannel: string;
+    totalPlayers: number;
+    events: string[];
+}
+
+export interface PlayersList {
+    [key: number]: number[];
+}
+
+export interface ResumeData {
+    auctionState: AuctionState;
+    auctionStats: AuctionStats;
+    currentPlayerIndex: number;
+    shuffledPlayers: PlayersList;
+    captains: Captains;
+}
+
+export interface AuctionStats {
+    totalBids: number;
+    totalSpent: number;
+    mostValuablePlayer: string;
+    mostValuablePlayerValue: number;
+    mostValuablePlayerTier: 1 | 2 | 3 | 4;
+    mostValuablePlayerTeam: string;
+    playersSold: number;
+    totalPlayers: number;
+    biggestSpender: string;
+    biggestSpenderAmount: number;
+    biggestSpenderTeam: string;
+}
+
+interface TeamMembers {
+    id: string;
+    name: string;
+    cost: number;
+}
+
+export interface CaptainState {
+    name: string;
+    teamname: string;
+    balance: number;
+    teammembers: TeamMembers[];
+    teamvalue: number;
+}
+
+// Interface for a dictionary of captain objects
+export interface Captains {
+    [id: string]: CaptainState;
+}
+
+export class StateUtils {
+    private static AuctionStateDefaults = {
+        status: 'idle',
+        currentTierIndex: undefined,
+        currentPlayer: undefined,
+        currentPlayerName: undefined,
+        currentThreadId: undefined,
+        biddingActive: false,
+        timeRemaining: undefined,
+        highestBid: undefined,
+        highestBidderId: undefined,
+        currentAuctionChannel: undefined,
+        totalPlayers: undefined,
+        events: [],
+    };
+    private static AuctionStatsDefaults = {
+        totalBids: 0,
+        totalSpent: 0,
+        mostValuablePlayer: undefined,
+        mostValuablePlayerValue: undefined,
+        mostValuablePlayerTier: undefined,
+        mostValuablePlayerTeam: undefined,
+        playersSold: 0,
+        totalPlayers: 0,
+        biggestSpender: undefined,
+        biggestSpenderAmount: undefined,
+        biggestSpenderTeam: undefined,
+    };
+    private static AuctionState: AuctionState = this.AuctionStateDefaults;
+    private static AuctionStats: AuctionStats = this.AuctionStatsDefaults;
+    private static Captains: Captains = {};
+
+    public static async resetAuctionStateValues(): Promise<void> {
+        let AuctionConfig = require('../../config/tournament/config.json');
+        let CaptainConfig = require('../../config/tournament/captains.json');
+
+        this.AuctionState = this.AuctionStateDefaults;
+        this.AuctionStats = this.AuctionStatsDefaults;
+
+        this.Captains = {};
+
+        Object.keys(CaptainConfig).forEach(captainId => {
+            this.Captains[captainId] = {
+                name: CaptainConfig[captainId].name,
+                teamname: CaptainConfig[captainId].teamname,
+                balance: AuctionConfig.startingBalance,
+                teammembers: [],
+                teamvalue: 0,
+            };
+        });
+
+        Logger.debug('Auction states reset!');
+    }
+
+    // State stuff
+    public static async getState(): Promise<AuctionState> {
+        return this.AuctionState;
+    }
+
+    public static async getStatus(): Promise<string> {
+        return this.AuctionState.status;
+    }
+
+    public static async addEvent(event: string): Promise<void> {
+        this.AuctionState.events.push(event);
+    }
+
+    public static async getEvents(): Promise<string[]> {
+        return this.AuctionState.events;
+    }
+
+    public static async writeAuctionStateValues<K extends keyof AuctionState>(values: {
+        [key in K]: AuctionState[K];
+    }): Promise<void> {
+        Object.keys(values).forEach(key => {
+            if (Object.keys(this.AuctionState).includes(key)) {
+                StateUtils.AuctionState[key as K] = values[key as K];
+            } else {
+                throw new Error(`Invalid key: ${key}`);
+            }
+        });
+
+        // Log all changed states except if timeRemaining is changed
+        Object.keys(values).forEach(key => {
+            if (key != 'timeRemaining') {
+                Logger.debug(`State '${key}' changed to ${values[key as K]}`);
+            }
+        });
+    }
+
+    public static async getTimeRemaining(): Promise<number> {
+        return this.AuctionState.timeRemaining;
+    }
+
+    // Captain stuff
+    public static async getCaptainState(captainId: string): Promise<Partial<CaptainState>> {
+        return this.Captains[captainId];
+    }
+
+    public static async isCaptain(discordId: string): Promise<boolean> {
+        return Object.keys(this.Captains).includes(discordId);
+    }
+
+    public static async getHighestBid(): Promise<{
+        bid: number;
+        bidderId: string;
+        bidderName: string;
+    }> {
+        if (!this.AuctionState.highestBidderId) {
+            return undefined;
+        }
+
+        const captainName = this.Captains[this.AuctionState.highestBidderId].name;
+
+        return {
+            bid: this.AuctionState.highestBid,
+            bidderId: this.AuctionState.highestBidderId,
+            bidderName: captainName,
+        };
+    }
+
+    public static async setHighestBid(captainId: string | number, bid: number): Promise<void> {
+        this.AuctionState.highestBid = bid;
+        this.AuctionState.highestBidderId = captainId.toString();
+
+        Logger.info(`Highest bid set to ${bid} by captain ${this.Captains[captainId].name}`);
+    }
+
+    public static async SellPlayer(): Promise<void> {
+        let captainId = this.AuctionState.highestBidderId;
+        let playerId = this.AuctionState.currentPlayer;
+        let playerName = this.AuctionState.currentPlayerName;
+        let playerCost = this.AuctionState.highestBid;
+
+        // Update captain balance
+        this.Captains[captainId].balance -= playerCost;
+
+        // Add player to captain's team
+        this.Captains[captainId].teammembers.push({
+            id: playerId,
+            name: playerName,
+            cost: playerCost,
+        });
+
+        // Update captain's team value
+        this.Captains[captainId].teamvalue += playerCost;
+
+        // Push to stats
+        this.AuctionStats.playersSold++;
+        this.AuctionStats.totalSpent += playerCost;
+        if (
+            this.AuctionStats.mostValuablePlayerValue === undefined ||
+            playerCost > this.AuctionStats.mostValuablePlayerValue
+        ) {
+            this.AuctionStats.mostValuablePlayer = this.AuctionState.currentPlayerName;
+            this.AuctionStats.mostValuablePlayerTier =
+                auctionConfig.tierOrder[this.AuctionState.currentTierIndex];
+            this.AuctionStats.mostValuablePlayerValue = playerCost;
+            this.AuctionStats.mostValuablePlayerTeam = this.Captains[captainId].teamname;
+        }
+
+        Logger.info(`Player ${playerId} bought by captain ${captainId} for ${playerCost}`);
+    }
+
+    public static async GetBalance(captainId: string): Promise<number> {
+        return this.Captains[captainId].balance;
+    }
+
+    public static async GetTeam(captainId: string): Promise<object[]> {
+        return this.Captains[captainId].teammembers;
+    }
+
+    public static async GetAuctionResults(): Promise<Captains> {
+        return this.Captains;
+    }
+
+    public static async GetAuctionStats(): Promise<AuctionStats> {
+        // Calculate biggest spender
+        let biggestSpender: string;
+        let biggestSpenderAmount: number;
+        let biggestSpenderTeam: string;
+        for (let captainId in this.Captains) {
+            let captain = this.Captains[captainId];
+            let spent = auctionConfig.startingBalance - captain.balance;
+            if (biggestSpenderAmount === undefined || spent < biggestSpenderAmount) {
+                biggestSpender = captain.name;
+                biggestSpenderAmount = captain.balance;
+                biggestSpenderTeam = captain.teamname;
+            }
+        }
+
+        // Return key-value pairs
+        return {
+            playersSold: this.AuctionStats.playersSold,
+            totalBids: this.AuctionStats.totalBids,
+            totalSpent: this.AuctionStats.totalSpent,
+            totalPlayers: this.AuctionState.totalPlayers,
+            mostValuablePlayer: this.AuctionStats.mostValuablePlayer,
+            mostValuablePlayerValue: this.AuctionStats.mostValuablePlayerValue,
+            mostValuablePlayerTier: this.AuctionStats.mostValuablePlayerTier,
+            mostValuablePlayerTeam: this.AuctionStats.mostValuablePlayerTeam,
+            biggestSpender: biggestSpender,
+            biggestSpenderAmount: biggestSpenderAmount,
+            biggestSpenderTeam: biggestSpenderTeam,
+        };
+    }
+
+    // Pausing and resuming
+    public static async ResumeAuction(resumeData: ResumeData): Promise<void> {
+        // Set auction state
+        this.AuctionState = resumeData.auctionState;
+
+        // Set auction stats
+        this.AuctionStats = resumeData.auctionStats;
+
+        // Set captain states
+        this.Captains = resumeData.captains;
+    }
+}
