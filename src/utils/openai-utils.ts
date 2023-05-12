@@ -2,7 +2,6 @@ import { createRequire } from 'node:module';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Configuration, OpenAIApi } from 'openai';
 
-import { AuctionStats } from './state-utils.js';
 import { Logger } from '../services/logger.js';
 
 const require = createRequire(import.meta.url);
@@ -15,10 +14,7 @@ export class OpenAIUtils {
     });
     private static readonly openai = new OpenAIApi(this.configuration);
 
-    public static async GenerateReport(
-        systemPrompt: string,
-        userPrompt: AuctionStats
-    ): Promise<string> {
+    public static async GenerateReport(systemPrompt: string, userPrompt: object): Promise<string> {
         const MODEL = 'gpt-4';
 
         Logger.debug(`Prompting ${MODEL} with: `, userPrompt);

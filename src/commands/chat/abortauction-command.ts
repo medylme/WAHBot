@@ -102,9 +102,9 @@ export class AbortAuctionCommand implements Command {
             });
 
             const stoppedEmbed = new EmbedBuilder()
-                .setColor(RandomUtils.getDangerColor())
+                .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('Auction aborting...')
-                .setDescription('Aborting auction safely...');
+                .setDescription('Queued the auction to abort...');
 
             await intr.editReply({ embeds: [stoppedEmbed], components: [] });
         } else {

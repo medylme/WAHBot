@@ -133,6 +133,7 @@ export class StartAuctionCommand implements Command {
                 for (const key in shuffledPlayers) {
                     PlayersData[key] = shuffledPlayers[key];
                 }
+                Logger.info('Player Order (From Paused State):', PlayersData);
                 currentPlayerIndex = resumeData.currentPlayerIndex;
                 resumeData.auctionState.status = 'running';
                 await StateUtils.ResumeAuction(resumeData);
@@ -172,9 +173,14 @@ export class StartAuctionCommand implements Command {
             });
 
             // Shuffle players in each tier
-            for (let i = 0; i < AuctionConfig.tierOrder.length; i++) {
-                const tier = AuctionConfig.tierOrder[i];
-                PlayersData[tier] = RandomUtils.shuffle(PlayersData[tier]);
+            if (AuctionConfig.shufflePlayers) {
+                for (let i = 0; i < AuctionConfig.tierOrder.length; i++) {
+                    const tier = AuctionConfig.tierOrder[i];
+                    PlayersData[tier] = RandomUtils.shuffle(PlayersData[tier]);
+                }
+                Logger.info('Player Order (Shuffled):', PlayersData);
+            } else {
+                Logger.info('Player Order (File Ordered):', PlayersData);
             }
         }
 
@@ -208,13 +214,6 @@ export class StartAuctionCommand implements Command {
             await auctionChannel.send({ embeds: [NextTierEmbed] });
 
             let playerList = PlayersData[currentTier];
-            // Shuffle players
-            if (AuctionConfig.shufflePlayers) {
-                playerList = playerList.sort(() => Math.random() - 0.5);
-                Logger.info(`Tier ${currentTier} Order (Shuffled):`, playerList);
-            } else {
-                Logger.info(`Tier ${currentTier} Order (Not Shuffled):`, playerList);
-            }
 
             await delay(5000);
 
@@ -245,7 +244,7 @@ export class StartAuctionCommand implements Command {
                     break;
                 }
 
-                Logger.info(`Auctioning player id ${currentPlayerId}...`);
+                Logger.info(`Auctioning player '${username}' (${currentPlayerId})...`);
 
                 // Create thread
                 const thread = await auctionChannel.threads.create({
@@ -388,7 +387,7 @@ export class StartAuctionCommand implements Command {
                                 inline: true,
                             },
                             {
-                                name: 'Winning bid',
+                                name: 'Price',
                                 value: `${highestBid}`,
                                 inline: true,
                             },
@@ -517,15 +516,17 @@ export class StartAuctionCommand implements Command {
             const auctionResultsEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getPrimaryColor())
                 .setTitle(i == 0 ? 'Team Results' : 'Team Results *(continued)*')
-                .setDescription(`Below are the teams that were created during the auction:`)
+                .setDescription(
+                    i == 0 ? `Below are the teams that were created during the auction:` : ''
+                )
                 .addFields(
                     auctionResultsArray
                         .slice(i, i + 25)
                         .map(team => {
                             return {
-                                name: team.teamname,
+                                name: `**${team.teamname}** *(${team.teamvalue})*`,
                                 value: `${team.name} **(C)**\n${team.teammembers
-                                    .map(player => `${player.name} *(${player.cost} points)*`)
+                                    .map(player => `${player.name} *(${player.cost})*`)
                                     .join('\n')}`,
                                 inline: true,
                             };
@@ -538,7 +539,10 @@ export class StartAuctionCommand implements Command {
 
         // Calculate AI report
         if (AuctionConfig.AIReport) {
-            const _auctionStatsObject: AuctionStats = await StateUtils.GetAuctionStats();
+            const _auctionStatsObject = {
+                Stats: await StateUtils.GetAuctionStats(),
+                Captains: auctionResults,
+            };
             const _exampleStats: AuctionStats = {
                 playersSold: 32,
                 totalSpent: 213234,
@@ -583,7 +587,7 @@ export class StartAuctionCommand implements Command {
                             : ''
                     }
                     `,
-                    _exampleStats
+                    _auctionStatsObject
                 );
                 const aiReportEmbed = new EmbedBuilder()
                     .setColor(RandomUtils.getPrimaryColor())

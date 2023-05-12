@@ -190,7 +190,7 @@ export class StateUtils {
         this.AuctionState.highestBid = bid;
         this.AuctionState.highestBidderId = captainId.toString();
 
-        Logger.info(`Highest bid set to ${bid} by captain ${this.Captains[captainId].name}`);
+        Logger.info(`New highest bid: ${bid} - ${this.Captains[captainId].name}`);
     }
 
     public static async SellPlayer(): Promise<void> {
@@ -226,7 +226,7 @@ export class StateUtils {
             this.AuctionStats.mostValuablePlayerTeam = this.Captains[captainId].teamname;
         }
 
-        Logger.info(`Player ${playerId} bought by captain ${captainId} for ${playerCost}`);
+        Logger.info(`Player sold: ${playerCost} - ${this.Captains[captainId].name}`);
     }
 
     public static async GetBalance(captainId: string): Promise<number> {
@@ -251,7 +251,7 @@ export class StateUtils {
             let spent = auctionConfig.startingBalance - captain.balance;
             if (biggestSpenderAmount === undefined || spent < biggestSpenderAmount) {
                 biggestSpender = captain.name;
-                biggestSpenderAmount = captain.balance;
+                biggestSpenderAmount = spent;
                 biggestSpenderTeam = captain.teamname;
             }
         }
