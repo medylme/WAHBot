@@ -5,6 +5,7 @@ import {
     TextChannel,
 } from 'discord.js';
 import { RateLimiter } from 'discord.js-rate-limiter';
+import fetch from 'node-fetch';
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import util from 'node:util';
