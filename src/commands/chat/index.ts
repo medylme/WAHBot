@@ -7,3 +7,4 @@ export { BidCommand } from './bid-command.js';
 export { AddEventCommand } from './addevent-command.js';
 export { BalanceCommand } from './balance-command.js';
 export { PauseAuctionCommand } from './pauseauction-command.js';
+export { SkipPlayerCommand } from './skipplayer-command.js';

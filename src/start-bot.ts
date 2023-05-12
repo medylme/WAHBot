@@ -12,6 +12,7 @@ import {
     HelpCommand,
     InfoCommand,
     PauseAuctionCommand,
+    SkipPlayerCommand,
     StartAuctionCommand,
 } from './commands/chat/index.js';
 import {
@@ -76,6 +77,7 @@ async function start(): Promise<void> {
         new BidCommand(),
         new AddEventCommand(),
         new BalanceCommand(),
+        new SkipPlayerCommand(),
 
         // Message Context Commands
         //new ViewDateSent(),

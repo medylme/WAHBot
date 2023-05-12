@@ -101,6 +101,15 @@ export const ChatCommandMetadata: {
             },
         ],
     },
+    SKIPPLAYER: {
+        type: ApplicationCommandType.ChatInput,
+        name: 'skipplayer',
+        name_localizations: undefined,
+        description: `Skips the timer for the current player that is being auctioned off.`,
+        description_localizations: undefined,
+        dm_permission: false,
+        default_member_permissions: '8',
+    },
     ADDEVENT: {
         type: ApplicationCommandType.ChatInput,
         name: 'addevent',
