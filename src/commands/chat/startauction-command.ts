@@ -137,6 +137,14 @@ export class StartAuctionCommand implements Command {
                 resumeData.auctionState.status = 'running';
                 await StateUtils.ResumeAuction(resumeData);
 
+                fs.unlink('./config/tournament/paused.json', err => {
+                    if (err) {
+                        Logger.error('Error while deleting pause state file.', err);
+                        return;
+                    }
+                    Logger.debug('Pause state file deleted.');
+                });
+
                 startingAnnouncementEmbed
                     .setColor(RandomUtils.getPrimaryColor())
                     .setTitle('Auction resuming.')
