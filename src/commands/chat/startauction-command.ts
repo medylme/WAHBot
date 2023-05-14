@@ -13,7 +13,7 @@ import util from 'node:util';
 import { EventData } from '../../models/internal-models.js';
 import { Logger } from '../../services/logger.js';
 import { InteractionUtils, OpenAIUtils, RandomUtils, StateUtils } from '../../utils/index.js';
-import { AuctionStats, PlayersList, ResumeData } from '../../utils/state-utils.js';
+import { PlayersList, ResumeData } from '../../utils/state-utils.js';
 import { Command, CommandDeferType } from '../index.js';
 
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -543,19 +543,6 @@ export class StartAuctionCommand implements Command {
                 Stats: await StateUtils.GetAuctionStats(),
                 Captains: auctionResults,
             };
-            const _exampleStats: AuctionStats = {
-                playersSold: 32,
-                totalSpent: 213234,
-                totalBids: 251,
-                totalPlayers: 40,
-                mostValuablePlayer: 'KSN',
-                mostValuablePlayerValue: 10000,
-                mostValuablePlayerTier: 1,
-                mostValuablePlayerTeam: 'dyls pickles',
-                biggestSpender: 'dyl',
-                biggestSpenderAmount: 19843,
-                biggestSpenderTeam: 'dyls pickles',
-            };
             const eventsList = await StateUtils.getEvents();
 
             try {
@@ -566,7 +553,7 @@ export class StartAuctionCommand implements Command {
                         AuctionConfig.startingBalance
                     } points. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent pool called "last chance pool" for captains that do not yet have one player per tier. After this, they will face off in osu!.
                     IMPORTANT: all of the above does not have to be explained!
-                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use some Discord emojis. All  of the information you need is in the JSON below. Also note that the captains along with their teams are given, but you do not have to include them in the report, since they are displayed seperately already.
+                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use some Discord emojis.
                     - JSON explanation:
                     playerSold - The number of players sold
                     totalSpent - The total amount of money spent by all captains
@@ -579,6 +566,7 @@ export class StartAuctionCommand implements Command {
                     biggestSpender - The captain who spent the most balance
                     biggestSpenderAmount - The amount of balance the biggest spender spent
                     biggestSpenderTeam - The team name of the biggest spender
+                    (The captains along with their teams are also given, but do not mention it in the report as they are already listed separately; it's only for any extra information you might need) 
                     ${
                         eventsList
                             ? `- Notable/funny events to be integrated in the report (but not the main focus):
