@@ -38,7 +38,7 @@ export const ChatCommandMetadata: {
         description: Lang.getRef('commandDescs.info', Language.Default),
         description_localizations: Lang.getRefLocalizationMap('commandDescs.info'),
         dm_permission: true,
-        default_member_permissions: undefined,
+        default_member_permissions: '8',
         options: [
             {
                 ...Args.INFO_OPTION,
