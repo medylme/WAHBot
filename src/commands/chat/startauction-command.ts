@@ -397,7 +397,7 @@ export class StartAuctionCommand implements Command {
                     await mainChannelMessage.edit(
                         `**${username}** has been sold to **${highestBidder}** for **${highestBid}** points! \nThere are **${
                             playerList.length - i - 1
-                        }** player(s) left in this tier (make sure you get at least one).`
+                        }** player(s) left in this tier.`
                     );
                 }
 

@@ -28,7 +28,7 @@ export class ClearThreadsCommand implements Command {
 
         const confirmEmbed = new EmbedBuilder()
             .setColor(RandomUtils.getDangerColor())
-            .setTitle('Confirm')
+            .setTitle('Confirm?')
             .setDescription(
                 'Are you sure you want to clear all threads in the current channel? This cannot be undone!'
             );
@@ -87,7 +87,7 @@ export class ClearThreadsCommand implements Command {
         } else if (result.value === 'confirmed') {
             const stoppedEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
-                .setTitle('Deleting Threads')
+                .setTitle('Deleting...')
                 .setDescription('Deleting all threads in the current channel...');
             await intr.editReply({ embeds: [stoppedEmbed], components: [] });
 
@@ -107,7 +107,7 @@ export class ClearThreadsCommand implements Command {
 
             const successEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
-                .setTitle('Done')
+                .setTitle('Done!')
                 .setDescription('Deleted all threads in the current channel.');
             await intr.editReply({ embeds: [successEmbed], components: [] });
         } else {
