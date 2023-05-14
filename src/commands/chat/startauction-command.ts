@@ -551,9 +551,9 @@ export class StartAuctionCommand implements Command {
                     - General:
                     We're hosting an osu! tournament called Waffle's Auction House. Captains have just finished bidding against each other to compose their team with a balance of ${
                         AuctionConfig.startingBalance
-                    } points. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent pool called "last chance pool" for captains that do not yet have one player per tier. After this, they will face off in osu!.
+                    } points each. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent pool called "last chance pool" for captains that do not yet have one player per tier. After this, they will face off in osu!.
                     IMPORTANT: all of the above does not have to be explained!
-                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use some Discord emojis.
+                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use some Discord emojis (don't overdo it).
                     - JSON explanation:
                     playerSold - The number of players sold
                     totalSpent - The total amount of money spent by all captains
