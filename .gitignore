@@ -5,6 +5,8 @@
 /temp
 /**/config/**/*.example.json
 /**/config/**/paused.json
+/**/config/**/captains.json
+/**/config/**/players.json
 
 # =====================================================
 # Node.js
