@@ -343,15 +343,15 @@ export class StartAuctionCommand implements Command {
                 await waitForEnd;
 
                 // Close bidding
+                await StateUtils.writeAuctionStateValues({
+                    biddingActive: false,
+                });
+
                 const auctionEndEmbed = new EmbedBuilder()
                     .setColor(RandomUtils.getDangerColor())
                     .setTitle(`Bids are now closed!`);
                 await thread.send({ embeds: [auctionEndEmbed] });
                 await thread.setLocked(true);
-
-                await StateUtils.writeAuctionStateValues({
-                    biddingActive: false,
-                });
 
                 await delay(1000);
 
@@ -566,7 +566,7 @@ export class StartAuctionCommand implements Command {
                         AuctionConfig.startingBalance
                     } points. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent pool called "last chance pool" for captains that do not yet have one player per tier. After this, they will face off in osu!.
                     IMPORTANT: all of the above does not have to be explained!
-                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use some Discord emojis.
+                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use some Discord emojis. All  of the information you need is in the JSON below. Also note that the captains along with their teams are given, but you do not have to include them in the report, since they are displayed seperately already.
                     - JSON explanation:
                     playerSold - The number of players sold
                     totalSpent - The total amount of money spent by all captains
