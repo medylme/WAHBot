@@ -189,6 +189,7 @@ export class StateUtils {
     public static async setHighestBid(captainId: string | number, bid: number): Promise<void> {
         this.AuctionState.highestBid = bid;
         this.AuctionState.highestBidderId = captainId.toString();
+        this.AuctionStats.totalBids++;
 
         Logger.info(`New highest bid: ${bid} - ${this.Captains[captainId].name}`);
     }
