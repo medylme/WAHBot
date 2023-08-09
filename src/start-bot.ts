@@ -10,7 +10,7 @@ import {
     BidCommand,
     ClearThreadsCommand,
     HelpCommand,
-    InfoCommand,
+    //InfoCommand,
     PauseAuctionCommand,
     SkipPlayerCommand,
     StartAuctionCommand,
@@ -69,7 +69,7 @@ async function start(): Promise<void> {
     let commands: Command[] = [
         // Chat Commands
         new HelpCommand(),
-        new InfoCommand(),
+        //new InfoCommand(),
         new StartAuctionCommand(),
         new PauseAuctionCommand(),
         new AbortAuctionCommand(),

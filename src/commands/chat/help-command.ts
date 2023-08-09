@@ -37,24 +37,27 @@ export class HelpCommand implements Command {
                         name: 'WAH Help',
                     })
                     .setTitle('Auctions')
-                    .setDescription(`Welcome to Waffle's Auction House! Here are the rules for the auction:
+                    .setDescription(`Welcome to Waffle's Auction House! Here are the rules:
 
                     - Players will be auctioned off one-by-one.
-                    - There are four tiers of players, with tier 4 being the lowest seed and tier 1 being the highest.
+                    - There are four tiers of players, with tier 4 representing the lowest seed and tier 1 the highest.
                     - Auctions will be grouped by tier${
-                        shufflePlayers ? ', but players are shuffled within their tier' : ''
-                    }. The bot will show how many players are left.
+                        shufflePlayers
+                            ? ', but players are shuffled within their respective tier'
+                            : ''
+                    }. The bot will show how many players are left during the auction.
                     - Each player will be put on sale for ${auctionDuration} seconds, and the timer resets every time a new highest bid has been set.
-                    - If there were no bids placed, the player goes to a last chance pool. Captains that have yet to compose a valid team can request a player from this pool, free of charge (contact one of the hosts for this).
+                    - If there were no bids placed, the player goes to a free agent pool. Captains that have yet to compose a valid team can request a player from this pool, free of charge (contact one of the hosts for this).
                     - A valid team consists of one player from each tier, with a maximum of ten players.
 
                     - You start with ${startingBalance} balance.
                     - The starting bid for each player is ${minBid}.
                     - You cannot bid more than ${maxBid} on a player.
+                    - Your bid has to be at least 50 more than the current highest bid.
                     - To bid on a player, use the command \`/bid [amount]\`.
                     - To check your current balance, use the command \`/balance\`.
 
-                    If you win, the amount will be deducted from your balance. If not, you will not be charged.But remember: **you need one player per tier in your team**!
+                    If you win, the amount will be deducted from your balance. If not, you will not be charged. And remember: **you need one player per tier in your team**!
 
                     If you have any other questions, feel free to ask the hosts!
                     

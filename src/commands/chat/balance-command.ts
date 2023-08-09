@@ -12,8 +12,8 @@ export class BalanceCommand implements Command {
         if ((await StateUtils.getStatus()) !== 'running') {
             const notOngoingEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getErrorColor())
-                .setTitle('No ongoing auction')
-                .setDescription('There is no ongoing auction to abort.');
+                .setTitle('No ongoing auction (yet)')
+                .setDescription('what are you checking your balance for bro');
 
             await InteractionUtils.send(intr, notOngoingEmbed);
             return;

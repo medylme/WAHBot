@@ -119,13 +119,9 @@ export class CheckUtils {
             throw new Error(`Tiers incorrect. Please provide tiers 1-4 in the config.`);
         }
 
-        // Check if each property is a valid tier and has an array of 2 numbers
+        // Check if each property is a valid tier
         for (const tier in obj) {
-            if (
-                !expectedTiers.includes(tier) ||
-                !Array.isArray(obj[tier]) ||
-                obj[tier].length !== 2
-            ) {
+            if (!expectedTiers.includes(tier) || !Array.isArray(obj[tier])) {
                 throw new Error(`Tier ${tier} is not valid. Please check the config.`);
             }
             // Check if each item in the array is a number

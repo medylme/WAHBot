@@ -7,6 +7,7 @@ const auctionConfig = require('../../config/tournament/config.json');
 
 export interface AuctionState {
     status: string;
+    currentTier: number;
     currentTierIndex: number;
     currentPlayer: string;
     currentPlayerName: string;
@@ -28,6 +29,7 @@ export interface ResumeData {
     auctionState: AuctionState;
     auctionStats: AuctionStats;
     currentPlayerIndex: number;
+    freeAgents: TeamMembers[];
     shuffledPlayers: PlayersList;
     captains: Captains;
 }
@@ -49,6 +51,7 @@ export interface AuctionStats {
 interface TeamMembers {
     id: string;
     name: string;
+    tier: number;
     cost: number;
 }
 
@@ -68,6 +71,7 @@ export interface Captains {
 export class StateUtils {
     private static AuctionStateDefaults = {
         status: 'idle',
+        currentTier: undefined,
         currentTierIndex: undefined,
         currentPlayer: undefined,
         currentPlayerName: undefined,
@@ -95,15 +99,16 @@ export class StateUtils {
     };
     private static AuctionState: AuctionState = this.AuctionStateDefaults;
     private static AuctionStats: AuctionStats = this.AuctionStatsDefaults;
+    private static FreeAgents: TeamMembers[] = [];
     private static Captains: Captains = {};
 
     public static async resetAuctionStateValues(): Promise<void> {
         let AuctionConfig = require('../../config/tournament/config.json');
         let CaptainConfig = require('../../config/tournament/captains.json');
 
-        this.AuctionState = this.AuctionStateDefaults;
-        this.AuctionStats = this.AuctionStatsDefaults;
-
+        this.AuctionState = { ...this.AuctionStateDefaults };
+        this.AuctionStats = { ...this.AuctionStatsDefaults };
+        this.FreeAgents = [];
         this.Captains = {};
 
         Object.keys(CaptainConfig).forEach(captainId => {
@@ -194,6 +199,23 @@ export class StateUtils {
         Logger.info(`New highest bid: ${bid} - ${this.Captains[captainId].name}`);
     }
 
+    public static async MovePlayerToFreeAgents(): Promise<void> {
+        let playerId = this.AuctionState.currentPlayer;
+        let playerName = this.AuctionState.currentPlayerName;
+
+        // Add player to free agents
+        this.FreeAgents.push({
+            id: playerId,
+            name: playerName,
+            tier: this.AuctionState.currentTier,
+            cost: 0,
+        });
+    }
+
+    public static async GetFreeAgents(): Promise<TeamMembers[]> {
+        return this.FreeAgents;
+    }
+
     public static async SellPlayer(): Promise<void> {
         let captainId = this.AuctionState.highestBidderId;
         let playerId = this.AuctionState.currentPlayer;
@@ -207,6 +229,7 @@ export class StateUtils {
         this.Captains[captainId].teammembers.push({
             id: playerId,
             name: playerName,
+            tier: this.AuctionState.currentTier,
             cost: playerCost,
         });
 
@@ -281,6 +304,9 @@ export class StateUtils {
             ...resumeData.auctionState,
         };
 
+        // Set free agents
+        this.FreeAgents = [...resumeData.freeAgents];
+
         // Set auction stats
         this.AuctionStats = {
             ...this.AuctionStats,
@@ -288,6 +314,6 @@ export class StateUtils {
         };
 
         // Set captain states
-        this.Captains = resumeData.captains;
+        this.Captains = { ...resumeData.captains };
     }
 }

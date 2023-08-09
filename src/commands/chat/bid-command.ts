@@ -75,29 +75,39 @@ export class BidCommand implements Command {
             return;
         }
 
+        // Check if bid is higher than min bid
+        if (bidAmount < AuctionConfig.minBid) {
+            const minBidNotReachedEmbed = new EmbedBuilder()
+                .setTitle('Min bid not reached')
+                .setDescription(`You cannot place a bid lower than **${AuctionConfig.minBid}**.`)
+                .setColor(RandomUtils.getSecondaryColor());
+            await InteractionUtils.send(intr, minBidNotReachedEmbed);
+            return;
+        }
+
         // Check if bid is lower than max bid
         if (bidAmount > AuctionConfig.maxBid) {
             const maxBidExceededEmbed = new EmbedBuilder()
                 .setTitle('Max bid exceeded')
-                .setDescription(
-                    `You cannot place a bid higher than **${AuctionConfig.maxBid}**. (Also, do not forget that you need to have one player per tier!)`
-                )
+                .setDescription(`You cannot place a bid higher than **${AuctionConfig.maxBid}**.`)
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, maxBidExceededEmbed);
             return;
         }
 
-        // Check if bid is higher than the current highest bid
+        // Check if bid is at least 50 higher than the current highest bid
         let highestBidObject = await StateUtils.getHighestBid();
         if (highestBidObject != undefined) {
             const currentHighestBid = highestBidObject.bid;
             const currentHighestBidderId = highestBidObject.bidderId;
             const currentHighestBidderName = highestBidObject.bidderName;
-            if (bidAmount <= currentHighestBid) {
+
+            const threshold = currentHighestBid + 50; // TODO: Make this configurable
+            if (bidAmount < threshold) {
                 const notHighestBidEmbed = new EmbedBuilder()
                     .setTitle('Bid too low')
                     .setDescription(
-                        `Your bid of **${bidAmount}** must be higher than the current highest bid of **${currentHighestBid}** by **${
+                        `Your bid of **${bidAmount}** must be at least 50 higher than the current highest bid of **${currentHighestBid}** by **${
                             currentHighestBidderId == intr.user.id
                                 ? 'you'
                                 : currentHighestBidderName

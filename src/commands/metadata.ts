@@ -31,6 +31,7 @@ export const ChatCommandMetadata: {
             },
         ],
     },
+    /*
     INFO: {
         type: ApplicationCommandType.ChatInput,
         name: Lang.getRef('chatCommands.info', Language.Default),
@@ -46,6 +47,7 @@ export const ChatCommandMetadata: {
             },
         ],
     },
+    */
     STARTAUCTION: {
         type: ApplicationCommandType.ChatInput,
         name: 'startauction',
@@ -123,7 +125,6 @@ export const ChatCommandMetadata: {
                 name: 'event',
                 description: 'The event to add.',
                 type: ApplicationCommandOptionType.String,
-                max_value: 1000,
                 required: true,
             },
         ],
@@ -132,7 +133,7 @@ export const ChatCommandMetadata: {
         type: ApplicationCommandType.ChatInput,
         name: 'balance',
         name_localizations: undefined,
-        description: 'Shows your current balance.',
+        description: 'Shows your current balance (assuming there is an ongoing auction).',
         description_localizations: undefined,
         dm_permission: true,
         default_member_permissions: undefined,

@@ -1,7 +1,7 @@
 {
     "apiKey": "402208a8e88f4fcd0bffc160d6ddb74c4cdf0ae8",
     "openaiApiKey": "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",
-    "auctionDuration": 30,
+    "auctionDuration": 15,
     "minBid": 100,
     "maxBid": 15000,
     "maxTeamSize": 10,

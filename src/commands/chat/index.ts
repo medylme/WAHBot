@@ -1,5 +1,5 @@
 export { HelpCommand } from './help-command.js';
-export { InfoCommand } from './info-command.js';
+//export { InfoCommand } from './info-command.js';
 export { StartAuctionCommand } from './startauction-command.js';
 export { AbortAuctionCommand } from './abortauction-command.js';
 export { ClearThreadsCommand } from './clearthreads-command.js';

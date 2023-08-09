@@ -33,7 +33,7 @@ export class SkipPlayerCommand implements Command {
         // Check if bidding is open
         if (!state.biddingActive) {
             const biddingNotActiveEmbed = new EmbedBuilder()
-                .setTitle('Bidding not active')
+                .setTitle(`Can't skip player!`)
                 .setDescription(`Bidding is currently not active.`)
                 .setColor(RandomUtils.getDangerColor());
             await InteractionUtils.send(intr, biddingNotActiveEmbed);
