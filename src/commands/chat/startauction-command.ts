@@ -134,14 +134,11 @@ export class StartAuctionCommand implements Command {
                     totalSpent - The total amount of money spent by all captains
                     totalBids - The total number of bids made by all captains
                     totalPlayers - The total number of players in the tournament
-                    mostValuablePlayer - The player with the highest price reached
+                    mostValuablePlayer - The player that was sold for the most money first
                     mostValuablePlayerValue - The value of the MVP
                     mostValuablePlayerTier - The tier of the MVP
                     mostValuablePlayerTeam - The team that the MVP ended up going to
-                    biggestSpender - The captain who spent the most balance
-                    biggestSpenderAmount - The amount of balance the biggest spender spent
-                    biggestSpenderTeam - The team name of the biggest spender
-                    (The captains along with their teams are also given, but do not mention it in the report as they are already listed separately; it's only for any extra information you might need) 
+                    (The captains along with their teams are also given, but do not directly mention it in the report as they are already listed separately; it's only for any extra insight you might discover from the data)
                     ${
                         eventsList
                             ? `- Notable/funny events to be integrated in the report (but not the main focus):
@@ -204,7 +201,7 @@ export class StartAuctionCommand implements Command {
         const nextUpEmbed = new EmbedBuilder()
             .setColor(RandomUtils.getPrimaryColor())
             .setTitle(username)
-            .setDescription('Bidding starts in 3 seconds!')
+            .setDescription('Use `/bid [amount]` to bid on this player!')
             .setURL(`https://osu.ppy.sh/users/${currentPlayer}`)
             .setAuthor({
                 name: `${nextUpEmbedDesc}`,

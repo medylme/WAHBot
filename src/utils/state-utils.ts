@@ -43,9 +43,6 @@ export interface AuctionStats {
     mostValuablePlayerTeam: string;
     playersSold: number;
     totalPlayers: number;
-    biggestSpender: string;
-    biggestSpenderAmount: number;
-    biggestSpenderTeam: string;
 }
 
 interface TeamMembers {
@@ -239,6 +236,7 @@ export class StateUtils {
         // Push to stats
         this.AuctionStats.playersSold++;
         this.AuctionStats.totalSpent += playerCost;
+
         if (
             this.AuctionStats.mostValuablePlayerValue === undefined ||
             playerCost > this.AuctionStats.mostValuablePlayerValue
@@ -266,20 +264,6 @@ export class StateUtils {
     }
 
     public static async GetAuctionStats(): Promise<AuctionStats> {
-        // Calculate biggest spender
-        let biggestSpender: string;
-        let biggestSpenderAmount: number;
-        let biggestSpenderTeam: string;
-        for (let captainId in this.Captains) {
-            let captain = this.Captains[captainId];
-            let spent = auctionConfig.startingBalance - captain.balance;
-            if (biggestSpenderAmount === undefined || spent < biggestSpenderAmount) {
-                biggestSpender = captain.name;
-                biggestSpenderAmount = spent;
-                biggestSpenderTeam = captain.teamname;
-            }
-        }
-
         // Return key-value pairs
         return {
             playersSold: this.AuctionStats.playersSold,
@@ -290,9 +274,6 @@ export class StateUtils {
             mostValuablePlayerValue: this.AuctionStats.mostValuablePlayerValue,
             mostValuablePlayerTier: this.AuctionStats.mostValuablePlayerTier,
             mostValuablePlayerTeam: this.AuctionStats.mostValuablePlayerTeam,
-            biggestSpender: biggestSpender,
-            biggestSpenderAmount: biggestSpenderAmount,
-            biggestSpenderTeam: biggestSpenderTeam,
         };
     }
 
