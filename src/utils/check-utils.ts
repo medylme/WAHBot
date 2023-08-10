@@ -4,6 +4,7 @@ import { Logger } from '../services/index.js';
 
 const require = createRequire(import.meta.url);
 let ApiKeyConfig = require('../../config/tournament/apiKeys.json');
+let AuctionCaptainConfig = require('../../config/tournament/captains.json');
 let AuctionConfig = require('../../config/tournament/config.json');
 let AuctionPlayerConfig = require('../../config/tournament/players.json');
 
@@ -15,6 +16,8 @@ export class CheckUtils {
         Logger.debug('Auction Config OK');
         this.checkPlayerConfig();
         Logger.debug('Auction Player Config OK');
+        this.checkCaptainConfig();
+        Logger.debug('Auction Captain Config OK');
         await this.checkApiKeys();
         Logger.debug('API Key Config OK');
     }
@@ -176,6 +179,29 @@ export class CheckUtils {
             // Check if each item in the array is a number
             if (!obj[tier].every(item => typeof item === 'number')) {
                 throw new Error(`Tier ${tier} is not valid. Please only provide numbers.`);
+            }
+        }
+    }
+
+    private static checkCaptainConfig(): void {
+        const obj = AuctionCaptainConfig;
+
+        if (typeof obj !== 'object' || obj === null) {
+            throw new Error('Captain config is missing required fields!');
+        }
+
+        const keys = Object.keys(obj);
+        for (const key of keys) {
+            const entry = obj[key];
+            if (
+                typeof entry !== 'object' ||
+                entry === null ||
+                !Object.prototype.hasOwnProperty.call(entry, 'name') ||
+                typeof entry.name !== 'string' ||
+                !Object.prototype.hasOwnProperty.call(entry, 'teamname') ||
+                typeof entry.teamname !== 'string'
+            ) {
+                throw new Error('Captain config is invalid!');
             }
         }
     }
