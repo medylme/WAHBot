@@ -102,7 +102,10 @@ export class BidCommand implements Command {
             const currentHighestBidderId = highestBidObject.bidderId;
             const currentHighestBidderName = highestBidObject.bidderName;
 
-            const threshold = currentHighestBid + 50; // TODO: Make this configurable
+            let threshold = currentHighestBid;
+            if (currentHighestBid > 100) {
+                threshold += 50;
+            }
             if (bidAmount < threshold) {
                 const notHighestBidEmbed = new EmbedBuilder()
                     .setTitle('Bid too low')

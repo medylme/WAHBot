@@ -53,7 +53,7 @@ export class HelpCommand implements Command {
                     - You start with ${startingBalance} balance.
                     - The starting bid for each player is ${minBid}.
                     - You cannot bid more than ${maxBid} on a player.
-                    - Your bid has to be at least 50 more than the current highest bid.
+                    - Your bid has to be at least 50 more than the current highest bid (with exception of the starting bid).
                     - To bid on a player, use the command \`/bid [amount]\`.
                     - To check your current balance, use the command \`/balance\`.
 
