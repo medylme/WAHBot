@@ -31,6 +31,7 @@ async function writeToFile(
 }
 
 const require = createRequire(import.meta.url);
+let ApiKeyConfig = require('../../../config/tournament/apiKeys.json');
 let AuctionConfig = require('../../../config/tournament/config.json');
 
 function delay(ms: number): Promise<void> {
@@ -512,7 +513,7 @@ export class StartAuctionCommand implements Command {
                 const currentPlayerId = playerList[u];
 
                 // Get player info
-                const apiLink = `https://osu.ppy.sh/api/get_user?k=${AuctionConfig.apiKey}&u=${currentPlayerId}&m=0&type=id`;
+                const apiLink = `https://osu.ppy.sh/api/get_user?k=${ApiKeyConfig.osuApiKey}&u=${currentPlayerId}&m=0&type=id`;
                 const apiResponse = await fetch(apiLink);
                 // check if response is ok, if not, skip player
                 if (!apiResponse.ok) {

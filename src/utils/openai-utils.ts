@@ -7,8 +7,8 @@ import { Logger } from '../services/logger.js';
 const require = createRequire(import.meta.url);
 
 export class OpenAIUtils {
-    private static readonly auctionConfig = require('../../config/tournament/config.json');
-    private static readonly API_KEY = this.auctionConfig.openaiApiKey;
+    private static readonly apiKeyConfig = require('../../config/tournament/apiKeys.json');
+    private static readonly API_KEY = this.apiKeyConfig.openaiApiKey;
     private static readonly configuration = new Configuration({
         apiKey: this.API_KEY,
     });

@@ -153,7 +153,6 @@ async function start(): Promise<void> {
 
     // Checks
     try {
-        Logger.debug('Performing config validation checks...');
         await CheckUtils.checkTournamentConfigs();
     } catch (e) {
         Logger.error(e.message);

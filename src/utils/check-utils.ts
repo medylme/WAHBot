@@ -1,18 +1,71 @@
 import { createRequire } from 'node:module';
 
+import { Logger } from '../services/index.js';
+
 const require = createRequire(import.meta.url);
+let ApiKeyConfig = require('../../config/tournament/apiKeys.json');
 let AuctionConfig = require('../../config/tournament/config.json');
 let AuctionPlayerConfig = require('../../config/tournament/players.json');
 
 export class CheckUtils {
     public static async checkTournamentConfigs(): Promise<void> {
+        Logger.debug('Performing config validation checks...');
+
         this.checkConfig();
-        await this.checkPlayerConfig();
+        Logger.debug('Auction Config OK');
+        this.checkPlayerConfig();
+        Logger.debug('Auction Player Config OK');
+        await this.checkApiKeys();
+        Logger.debug('API Key Config OK');
+    }
+
+    private static async checkApiKeys(): Promise<void> {
+        const osuApiKey = ApiKeyConfig.osuApiKey;
+        const openaiApiKey = ApiKeyConfig.openaiApiKey;
+
+        if (!osuApiKey) {
+            throw new Error('osu! API key (v1) is missing!');
+        }
+
+        if (!openaiApiKey) {
+            throw new Error('OpenAI API key is missing!');
+        }
+
+        // Test osu! key
+        const osuEndpoint = `https://osu.ppy.sh/api/get_user?k=${osuApiKey}&u=1`;
+
+        try {
+            const response = await fetch(osuEndpoint);
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+        } catch (err) {
+            throw new Error('Something went wrong while fetching from the osu! endpoint!');
+        }
+
+        // Test OpenAI key
+        const openaiEndpoint = `https://api.openai.com/v1/models`;
+
+        try {
+            const response = await fetch(openaiEndpoint, {
+                headers: {
+                    Authorization: `Bearer ${openaiApiKey}`,
+                },
+            });
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+        } catch (err) {
+            throw new Error('Something went wrong while fetching from the OpenAI endpoint!');
+        }
     }
 
     private static checkConfig(): void {
         if (
-            !AuctionConfig.apiKey ||
             !AuctionConfig.auctionDuration ||
             !AuctionConfig.maxBid ||
             !AuctionConfig.minBid ||
@@ -20,7 +73,6 @@ export class CheckUtils {
             !AuctionConfig.startingBalance ||
             !AuctionConfig.shufflePlayers ||
             !AuctionConfig.tierOrder ||
-            !AuctionConfig.openaiApiKey ||
             !AuctionConfig.threadPrefix
         ) {
             throw new Error('Tournament config is missing required fields!');
@@ -73,14 +125,6 @@ export class CheckUtils {
             throw new Error(`Shuffle players must be true or false!`);
         }
 
-        if (typeof AuctionConfig.apiKey !== 'string') {
-            throw new Error(`API key must be a string!`);
-        }
-
-        if (typeof AuctionConfig.openaiApiKey !== 'string') {
-            throw new Error(`OpenAI API key must be a string!`);
-        }
-
         if (typeof AuctionConfig.auctionDuration !== 'number') {
             throw new Error(`Auction duration must be a number!`);
         }
@@ -114,7 +158,7 @@ export class CheckUtils {
         }
     }
 
-    private static async checkPlayerConfig(): Promise<void> {
+    private static checkPlayerConfig(): void {
         const obj = AuctionPlayerConfig;
 
         const expectedTiers = ['1', '2', '3', '4'];
