@@ -20,7 +20,8 @@ export class CheckUtils {
             !AuctionConfig.startingBalance ||
             !AuctionConfig.shufflePlayers ||
             !AuctionConfig.tierOrder ||
-            !AuctionConfig.openaiApiKey
+            !AuctionConfig.openaiApiKey ||
+            !AuctionConfig.threadPrefix
         ) {
             throw new Error('Tournament config is missing required fields!');
         }
@@ -106,6 +107,10 @@ export class CheckUtils {
 
         if (typeof AuctionConfig.AIReport !== 'boolean') {
             throw new Error(`AI report must be a boolean!`);
+        }
+
+        if (typeof AuctionConfig.threadPrefix !== 'string') {
+            throw new Error(`Thread prefix must be a string!`);
         }
     }
 

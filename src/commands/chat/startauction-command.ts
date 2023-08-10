@@ -178,11 +178,14 @@ export class StartAuctionCommand implements Command {
     ): Promise<void> {
         const auctionDuration: number = AuctionConfig.auctionDuration;
 
-        Logger.info(`Auctioning player '${username}' (${currentPlayer})...`);
+        Logger.info(
+            `Auctioning player Tier ${currentTier} #${currentPlayerIndex} '${username}' (${currentPlayer})...`
+        );
 
         // Create thread
+        const threadPrefix = AuctionConfig.threadPrefix;
         const thread = await auctionChannel.threads.create({
-            name: `Tier ${currentTier} | #${currentPlayerIndex + 1}: ${username}`,
+            name: `${threadPrefix}: Tier ${currentTier} | ${username}`,
             autoArchiveDuration: 1440,
             reason: 'Auctioning a player',
         });
@@ -216,8 +219,8 @@ export class StartAuctionCommand implements Command {
             ]);
         await thread.send({ embeds: [nextUpEmbed] });
 
-        // Wait 10 seconds, and then open bidding
-        await delay(3000);
+        // Wait a bit
+        await delay(1000);
 
         await StateUtils.writeAuctionStateValues({
             biddingActive: true,
@@ -302,7 +305,7 @@ export class StartAuctionCommand implements Command {
             await mainChannelMessage.edit(
                 `No one bid on this player. They will be placed in the free agent pool. \nThere are **${
                     playerList.length - currentPlayerIndex - 1
-                }** player(s) left in this tier (make sure you get at least one)!`
+                }** player(s) left in this tier (make sure you get at least one per tier)!`
             );
         } else {
             // Add player to winner's team

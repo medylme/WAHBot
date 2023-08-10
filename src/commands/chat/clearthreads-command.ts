@@ -16,6 +16,8 @@ import { Logger } from '../../services/logger.js';
 import { RandomUtils } from '../../utils/index.js';
 import { Command, CommandDeferType } from '../index.js';
 
+let AuctionConfig = require('../../config/tournament/config.json');
+
 export class ClearThreadsCommand implements Command {
     public names = ['clearthreads'];
     public cooldown = new RateLimiter(1, 5000);
@@ -30,7 +32,7 @@ export class ClearThreadsCommand implements Command {
             .setColor(RandomUtils.getDangerColor())
             .setTitle('Confirm?')
             .setDescription(
-                'Are you sure you want to clear all threads in the current channel? This cannot be undone!'
+                'Are you sure you want to clear all auction threads in the current channel? This cannot be undone!'
             );
 
         let prompt = await intr.editReply({
@@ -91,13 +93,17 @@ export class ClearThreadsCommand implements Command {
                 .setDescription('Deleting all threads in the current channel...');
             await intr.editReply({ embeds: [stoppedEmbed], components: [] });
 
+            const threadPrefix = AuctionConfig.threadPrefix;
             const activeThreads: FetchedThreads = await auctionChannel.threads.fetchActive();
             const archivedThreads: FetchedThreads = await auctionChannel.threads.fetchArchived();
-            for (const thread of activeThreads.threads.values()) {
-                await thread.delete();
-            }
+            const allThreads = activeThreads.threads.concat(archivedThreads.threads);
 
-            for (const thread of archivedThreads.threads.values()) {
+            for (const thread of allThreads.values()) {
+                // check if thread name starts with the current prefix
+                if (!thread.name.toLowerCase().startsWith(threadPrefix)) {
+                    continue;
+                }
+
                 await thread.delete();
             }
 
