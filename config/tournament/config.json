@@ -2,6 +2,8 @@
     "auctionDuration": 15,
     "minBid": 100,
     "maxBid": 13500,
+    "minBidIncrement": 50,
+    "maxBidIncrement": 2000,
     "maxTeamSize": 10,
     "AIReport": true,
     "startingBalance": 20000,

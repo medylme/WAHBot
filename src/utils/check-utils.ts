@@ -72,6 +72,8 @@ export class CheckUtils {
             !AuctionConfig.auctionDuration ||
             !AuctionConfig.maxBid ||
             !AuctionConfig.minBid ||
+            !AuctionConfig.minBidIncrement ||
+            !AuctionConfig.maxBidIncrement ||
             !AuctionConfig.maxTeamSize ||
             !AuctionConfig.startingBalance ||
             !AuctionConfig.shufflePlayers ||
@@ -101,6 +103,22 @@ export class CheckUtils {
 
         if (AuctionConfig.minBid > AuctionConfig.maxBid) {
             throw new Error(`Starting bid must be less than max bid!`);
+        }
+
+        if (AuctionConfig.minBidIncrement < 1 || AuctionConfig.minBidIncrement > 1000000) {
+            throw new Error(
+                `Min bid increment must be greater than 0! Please use a value between 1 and 1000000.`
+            );
+        }
+
+        if (AuctionConfig.maxBidIncrement < 1 || AuctionConfig.maxBidIncrement > 1000000) {
+            throw new Error(
+                `Max bid increment must be greater than 0! Please use a value between 1 and 1000000.`
+            );
+        }
+
+        if (AuctionConfig.minBidIncrement > AuctionConfig.maxBidIncrement) {
+            throw new Error(`Min bid increment must be less than max bid increment!`);
         }
 
         if (AuctionConfig.startingBalance < 1 || AuctionConfig.startingBalance > 1000000) {
@@ -138,6 +156,14 @@ export class CheckUtils {
 
         if (typeof AuctionConfig.maxBid !== 'number') {
             throw new Error(`Max bid must be a number!`);
+        }
+
+        if (typeof AuctionConfig.minBidIncrement !== 'number') {
+            throw new Error(`Min bid increment must be a number!`);
+        }
+
+        if (typeof AuctionConfig.maxBidIncrement !== 'number') {
+            throw new Error(`Max bid increment must be a number!`);
         }
 
         if (typeof AuctionConfig.startingBalance !== 'number') {
