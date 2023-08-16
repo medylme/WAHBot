@@ -584,6 +584,8 @@ export class StartAuctionCommand implements Command {
                         JSON.stringify(this.pauseData)
                     );
 
+                    Logger.debug('Wrote pause data:', this.pauseData);
+
                     await StateUtils.resetAuctionStateValues();
 
                     Logger.info('Auction successfully paused.');
