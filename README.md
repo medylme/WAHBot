@@ -6,7 +6,7 @@ Discord Bot for the [WAH 2023 osu! tourney](https://osu.ppy.sh/community/forums/
 ### Main
 - `start`: Build and start the bot.
 - `build`: Build the project using TypeScript.
-- `lint`: Find possible linting errors using ESLint..
+- `lint`: Find possible linting errors using ESLint.
 - `lint:fix`: Automatically fix any possible linting errors using ESLint.
 - `format`: Check code formatting using Prettier.
 - `format:fix`: Automatically fix code formatting issues using Prettier.
