@@ -3,10 +3,8 @@
 # =====================================================
 /dist
 /temp
-/**/config/**/*.example.json
-/**/config/**/paused.json
-/**/config/**/captains.json
-/**/config/**/players.json
+config/tournament/paused.json
+config/tournament/results.json
 
 # =====================================================
 # Node.js
