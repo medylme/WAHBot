@@ -665,13 +665,13 @@ export class StartAuctionCommand implements Command {
             const auctionExportedStats = await StateUtils.GetAuctionStats();
             const auctionExportedFreeAgents = await StateUtils.GetFreeAgents();
             const exportedFile = {
-                teams: { ...resultsArray },
+                teams: resultsArray,
                 teamCosts: {
-                    players: { ...playersArray },
-                    costs: { ...costsArray },
+                    players: playersArray,
+                    costs: costsArray,
                 },
-                stats: { ...auctionExportedStats },
-                freeAgents: { ...auctionExportedFreeAgents },
+                stats: auctionExportedStats,
+                freeAgents: auctionExportedFreeAgents,
             };
 
             const resultsFilePath = './config/tournament/results.json';
