@@ -34,7 +34,7 @@ export class ClearThreadsCommand implements Command {
             .setColor(RandomUtils.getDangerColor())
             .setTitle('Confirm?')
             .setDescription(
-                'Are you sure you want to clear all auction threads in the current channel? This cannot be undone!'
+                'Are you sure you want to clear all auction threads in the current channel? This will only delete threads pertaining to the current auction, but cannot be undone!'
             );
 
         let prompt = await intr.editReply({
