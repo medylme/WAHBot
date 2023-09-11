@@ -286,6 +286,9 @@ export class StateUtils {
 
     // Pausing and resuming
     public static async ResumeAuction(resumeData: ResumeData): Promise<void> {
+        // Reset auction state
+        await this.resetAuctionStateValues();
+
         // Set auction state
         this.AuctionState = {
             ...this.AuctionState,
@@ -293,7 +296,9 @@ export class StateUtils {
         };
 
         // Set free agents
-        this.FreeAgents = [...resumeData.freeAgents];
+        for (const agent of resumeData.freeAgents) {
+            this.FreeAgents.push(agent);
+        }
 
         // Set auction stats
         this.AuctionStats = {
