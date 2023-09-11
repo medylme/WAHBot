@@ -401,7 +401,7 @@ export class StartAuctionCommand implements Command {
         const startingAnnouncementEmbed = new EmbedBuilder();
         let resuming = fs.existsSync('./result/paused.json');
         if (resuming) {
-            let PausedStateFile = require('../../../config/tournament/paused.json');
+            let PausedStateFile = require('../../../result/paused.json');
             try {
                 const resumeData = PausedStateFile as ResumeData;
                 Logger.info(`'resume.json' found, resuming auction from file...`);
