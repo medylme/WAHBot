@@ -399,7 +399,7 @@ export class StartAuctionCommand implements Command {
         // If resuming, load data from file
         // Otherwise, start auction from scratch
         const startingAnnouncementEmbed = new EmbedBuilder();
-        let resuming = fs.existsSync('./config/tournament/paused.json');
+        let resuming = fs.existsSync('./result/paused.json');
         if (resuming) {
             let PausedStateFile = require('../../../config/tournament/paused.json');
             try {
@@ -416,7 +416,7 @@ export class StartAuctionCommand implements Command {
                 resumeData.auctionState.status = 'running';
                 await StateUtils.ResumeAuction(resumeData);
 
-                fs.unlink('./config/tournament/paused.json', err => {
+                fs.unlink('./result/paused.json', err => {
                     if (err) {
                         Logger.error('Error while deleting pause state file.', err);
                         return;
@@ -578,10 +578,7 @@ export class StartAuctionCommand implements Command {
                 this.pauseData.captains = await StateUtils.GetAuctionResults();
                 this.pauseData.currentPlayerIndex = pausedPlayerIndex;
                 try {
-                    await writeToFile(
-                        './config/tournament/paused.json',
-                        JSON.stringify(this.pauseData)
-                    );
+                    await writeToFile('./result/paused.json', JSON.stringify(this.pauseData));
 
                     Logger.debug('Wrote pause data:', this.pauseData);
 
@@ -674,7 +671,7 @@ export class StartAuctionCommand implements Command {
                 freeAgents: auctionExportedFreeAgents,
             };
 
-            const resultsFilePath = './config/tournament/results.json';
+            const resultsFilePath = './result/results.json';
 
             // Check if file exists
             if (fs.existsSync(resultsFilePath)) {

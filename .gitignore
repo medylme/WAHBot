@@ -3,8 +3,7 @@
 # =====================================================
 /dist
 /temp
-config/tournament/paused.json
-config/tournament/results.json
+/result
 
 # =====================================================
 # Node.js
