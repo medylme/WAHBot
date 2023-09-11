@@ -440,7 +440,7 @@ export class StartAuctionCommand implements Command {
                 .setColor(RandomUtils.getPrimaryColor())
                 .setTitle('Auction starting!')
                 .setDescription(
-                    'The auction will be starting shortly, \n\n**Captains:** Make sure you have read `/help auction`!'
+                    'The auction will be starting shortly. The bidding will be pretty fast-paced, so be ready! \n\n**Captains:** Make sure you have read `/help auction`!'
                 );
 
             await StateUtils.resetAuctionStateValues();
