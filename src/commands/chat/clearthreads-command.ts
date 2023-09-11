@@ -102,7 +102,7 @@ export class ClearThreadsCommand implements Command {
 
             for (const thread of allThreads.values()) {
                 // check if thread name starts with the current prefix
-                if (!thread.name.toLowerCase().startsWith(threadPrefix)) {
+                if (!thread.name.toLowerCase().startsWith(threadPrefix.toLowerCase())) {
                     continue;
                 }
 
