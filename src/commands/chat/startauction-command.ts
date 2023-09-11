@@ -632,27 +632,27 @@ export class StartAuctionCommand implements Command {
             for (const key in auctionExportedResults) {
                 // Results 1: Team Name
                 resultsArray.push(auctionExportedResults[key].teamname);
-                // Results 2: Team Members
                 let teamSlotsLeft = 9;
 
-                // Results 2.1: Captain Name
+                // Results 2.1: Team Members | Captain
                 resultsArray.push(auctionExportedResults[key].osuId);
+
+                // Results 2.2: Team Members| Players
                 for (const player of auctionExportedResults[key].teammembers) {
-                    // Results 2.x: Player Names
                     resultsArray.push(player.id);
                     teamSlotsLeft--;
 
-                    // nigger costs: Player
+                    // Costs Array: Player
                     playersArray.push(player.id);
                     costsArray.push(player.cost);
                 }
 
-                // Results 2.y: Empty Markers
+                // Results 2.3: Empty Markers
                 for (let i = 0; i < teamSlotsLeft; i++) {
                     resultsArray.push('empty slot');
                 }
 
-                // nigger costs: Captain
+                // Costs Array: Captain
                 playersArray.push(auctionExportedResults[key].osuId);
                 costsArray.push(0);
 
