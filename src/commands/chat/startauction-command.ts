@@ -548,7 +548,7 @@ export class StartAuctionCommand implements Command {
                     this.pauseData.currentPlayerIndex = 0;
                     u++;
                 } else {
-                    this.pauseData.currentPlayerIndex = currentPlayerIndex;
+                    this.pauseData.currentPlayerIndex = currentPlayerIndex + 1;
                 }
 
                 // Check if auction is queued to pause or abort
