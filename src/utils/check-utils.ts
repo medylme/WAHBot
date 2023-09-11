@@ -225,7 +225,9 @@ export class CheckUtils {
                 !Object.prototype.hasOwnProperty.call(entry, 'name') ||
                 typeof entry.name !== 'string' ||
                 !Object.prototype.hasOwnProperty.call(entry, 'teamname') ||
-                typeof entry.teamname !== 'string'
+                typeof entry.teamname !== 'string' ||
+                !Object.prototype.hasOwnProperty.call(entry, 'osuId') ||
+                typeof entry.osuId !== 'number'
             ) {
                 throw new Error('Captain config is invalid!');
             }

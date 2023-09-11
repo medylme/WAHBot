@@ -394,7 +394,6 @@ export class StartAuctionCommand implements Command {
         }
 
         // Start auction
-
         Logger.info(`Auction started by ${intr.user.tag} (${intr.user.id})`);
 
         // If resuming, load data from file
@@ -629,10 +628,48 @@ export class StartAuctionCommand implements Command {
         // Export to file
         try {
             const auctionExportedResults = await StateUtils.GetAuctionResults();
+            let resultsArray = [];
+            let playersArray = [];
+            let costsArray = [];
+            for (const key in auctionExportedResults) {
+                // Results 1: Team Name
+                resultsArray.push(auctionExportedResults[key].teamname);
+                // Results 2: Team Members
+                let teamSlotsLeft = 9;
+
+                // Results 2.1: Captain Name
+                resultsArray.push(auctionExportedResults[key].osuId);
+                for (const player of auctionExportedResults[key].teammembers) {
+                    // Results 2.x: Player Names
+                    resultsArray.push(player.id);
+                    teamSlotsLeft--;
+
+                    // nigger costs: Player
+                    playersArray.push(player.id);
+                    costsArray.push(player.cost);
+                }
+
+                // Results 2.y: Empty Markers
+                for (let i = 0; i < teamSlotsLeft; i++) {
+                    resultsArray.push('empty slot');
+                }
+
+                // nigger costs: Captain
+                playersArray.push(auctionExportedResults[key].osuId);
+                costsArray.push(0);
+
+                // Results 3: End of Team Marker
+                resultsArray.push(';');
+            }
+
             const auctionExportedStats = await StateUtils.GetAuctionStats();
             const auctionExportedFreeAgents = await StateUtils.GetFreeAgents();
             const exportedFile = {
-                teams: { ...auctionExportedResults },
+                teams: { ...resultsArray },
+                teamCosts: {
+                    players: { ...playersArray },
+                    costs: { ...costsArray },
+                },
                 stats: { ...auctionExportedStats },
                 freeAgents: { ...auctionExportedFreeAgents },
             };

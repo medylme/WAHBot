@@ -55,6 +55,7 @@ interface TeamMembers {
 export interface CaptainState {
     name: string;
     teamname: string;
+    osuId: number;
     balance: number;
     teammembers: TeamMembers[];
     teamvalue: number;
@@ -113,6 +114,7 @@ export class StateUtils {
                 name: CaptainConfig[captainId].name,
                 teamname: CaptainConfig[captainId].teamname,
                 balance: AuctionConfig.startingBalance,
+                osuId: CaptainConfig[captainId].osuId,
                 teammembers: [],
                 teamvalue: 0,
             };
@@ -209,8 +211,9 @@ export class StateUtils {
         });
     }
 
-    public static async GetFreeAgents(): Promise<TeamMembers[]> {
-        return this.FreeAgents;
+    public static async GetFreeAgents(): Promise<number[]> {
+        let freeAgentsArray = this.FreeAgents.map(player => Number(player.id));
+        return freeAgentsArray;
     }
 
     public static async SellPlayer(): Promise<void> {
