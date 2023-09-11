@@ -574,6 +574,7 @@ export class StartAuctionCommand implements Command {
                 for (const key in PlayersData) {
                     this.pauseData.shuffledPlayers[key] = PlayersData[key];
                 }
+                this.pauseData.freeAgents = await StateUtils.GetFreeAgentObject();
                 this.pauseData.auctionState.status = 'idle';
                 this.pauseData.captains = await StateUtils.GetAuctionResults();
                 this.pauseData.currentPlayerIndex = pausedPlayerIndex;
@@ -660,7 +661,7 @@ export class StartAuctionCommand implements Command {
             }
 
             const auctionExportedStats = await StateUtils.GetAuctionStats();
-            const auctionExportedFreeAgents = await StateUtils.GetFreeAgents();
+            const auctionExportedFreeAgents = await StateUtils.GetFreeAgentList();
             const exportedFile = {
                 teams: resultsArray,
                 teamCosts: {

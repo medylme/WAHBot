@@ -211,7 +211,11 @@ export class StateUtils {
         });
     }
 
-    public static async GetFreeAgents(): Promise<number[]> {
+    public static async GetFreeAgentObject(): Promise<TeamMembers[]> {
+        return this.FreeAgents;
+    }
+
+    public static async GetFreeAgentList(): Promise<number[]> {
         let freeAgentsArray = this.FreeAgents.map(player => Number(player.id));
         return freeAgentsArray;
     }
