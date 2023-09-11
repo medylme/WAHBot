@@ -674,7 +674,17 @@ export class StartAuctionCommand implements Command {
                 freeAgents: { ...auctionExportedFreeAgents },
             };
 
-            await writeToFile('./config/tournament/results.json', JSON.stringify(exportedFile));
+            const resultsFilePath = './config/tournament/results.json';
+
+            // Check if file exists
+            if (fs.existsSync(resultsFilePath)) {
+                Logger.info('A results file already exists. Deleting...');
+                fs.unlinkSync(resultsFilePath);
+            }
+
+            // Write to file
+            await writeToFile(resultsFilePath, JSON.stringify(exportedFile));
+            Logger.info('Results written to file.');
         } catch (e) {
             console.error('Failed to export file', e);
         }
