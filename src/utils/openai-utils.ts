@@ -14,6 +14,32 @@ export class OpenAIUtils {
     });
     private static readonly openai = new OpenAIApi(this.configuration);
 
+    public static async pingApi(): Promise<boolean> {
+        const openaiEndpoint = `https://api.openai.com/v1/models`;
+
+        try {
+            const response = await fetch(openaiEndpoint, {
+                headers: {
+                    Authorization: `Bearer ${this.API_KEY}`,
+                },
+            });
+            const data = await response.json();
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            if (data.length === 0) {
+                throw new Error('OpenAI API returned no data!');
+            }
+
+            return true;
+        } catch (err) {
+            Logger.error('Failed to ping OpenAI API', err);
+            return false;
+        }
+    }
+
     public static async GenerateReport(systemPrompt: string, userPrompt: object): Promise<string> {
         const MODEL = 'gpt-3.5-turbo-16k'; // 'gpt-4' - best but slow | 'gpt-3.5-turbo' - faster | 'gpt-3.5-turbo-16k' - maybe an option???
 

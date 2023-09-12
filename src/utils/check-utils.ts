@@ -1,5 +1,6 @@
 import { createRequire } from 'node:module';
 
+import { OpenAIUtils, OsuApiUtils } from './index.js';
 import { Logger } from '../services/index.js';
 
 const require = createRequire(import.meta.url);
@@ -34,35 +35,15 @@ export class CheckUtils {
             throw new Error('OpenAI API key is missing!');
         }
 
-        // Test osu! key
-        const osuEndpoint = `https://osu.ppy.sh/api/get_user?k=${osuApiKey}&u=1`;
-
-        try {
-            const response = await fetch(osuEndpoint);
-            const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error);
-            }
-        } catch (err) {
+        // Test osu! API
+        const osuApiPingRes = await OsuApiUtils.pingApi();
+        if (!osuApiPingRes) {
             throw new Error('Something went wrong while fetching from the osu! endpoint!');
         }
 
-        // Test OpenAI key
-        const openaiEndpoint = `https://api.openai.com/v1/models`;
-
-        try {
-            const response = await fetch(openaiEndpoint, {
-                headers: {
-                    Authorization: `Bearer ${openaiApiKey}`,
-                },
-            });
-            const data = await response.json();
-
-            if (data.error) {
-                throw new Error(data.error);
-            }
-        } catch (err) {
+        // Test OpenAI
+        const openaiPingRes = await OpenAIUtils.pingApi();
+        if (!openaiPingRes) {
             throw new Error('Something went wrong while fetching from the OpenAI endpoint!');
         }
     }
