@@ -28,7 +28,7 @@ export class BidCommand implements Command {
         )) as TextChannel;
 
         // Check if player is captain
-        const isCaptain = await StateUtils.isCaptain(intr.user.id);
+        const isCaptain = await StateUtils.isCaptainFromDisc(intr.user.id);
         if (!isCaptain) {
             const notCaptainEmbed = new EmbedBuilder()
                 .setTitle('Not captain')
@@ -62,7 +62,7 @@ export class BidCommand implements Command {
         }
 
         // Check if captain has balance to bid
-        const captainState = await StateUtils.getCaptainState(intr.user.id);
+        const captainState = await StateUtils.getCaptainStateFromDisc(intr.user.id);
         const captainBalance = captainState.balance;
         if (bidAmount > captainBalance) {
             const notEnoughBalanceEmbed = new EmbedBuilder()

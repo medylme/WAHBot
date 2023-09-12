@@ -20,7 +20,7 @@ export class BalanceCommand implements Command {
         }
 
         // Check if user is captain
-        const isCaptain = StateUtils.isCaptain(intr.user.id);
+        const isCaptain = StateUtils.isCaptainFromDisc(intr.user.id);
 
         if (!isCaptain) {
             const notCaptainEmbed = new EmbedBuilder()

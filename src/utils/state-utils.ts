@@ -1,10 +1,12 @@
 import { createRequire } from 'node:module';
 
+import { OsuApiUtils } from './index.js';
 import { Logger } from '../services/logger.js';
 
 const require = createRequire(import.meta.url);
 const CaptainConfig = require('../../config/tournament/captains.json');
 const AuctionConfig = require('../../config/tournament/config.json');
+const PlayerConfig = require('../../config/tournament/players.json');
 
 export interface AuctionState {
     status: string;
@@ -180,12 +182,70 @@ export class StateUtils {
     }
 
     // Captain stuff
-    public static async getCaptainState(captainId: string): Promise<Partial<CaptainState>> {
+    public static async isCaptainFromDisc(discordId: string): Promise<boolean> {
+        return Object.keys(this.Captains).includes(discordId);
+    }
+
+    public static async getCaptainStateFromDisc(captainId: string): Promise<Partial<CaptainState>> {
         return this.Captains[captainId];
     }
 
-    public static async isCaptain(discordId: string): Promise<boolean> {
-        return Object.keys(this.Captains).includes(discordId);
+    public static async getCaptainStateFromOsu(
+        query: number | string
+    ): Promise<CaptainState | null> {
+        let captainOsuId: number;
+        let captainState: CaptainState | null = null;
+
+        if (typeof query === 'string') {
+            captainOsuId = await OsuApiUtils.getOsuId(query);
+        } else {
+            captainOsuId = query;
+        }
+
+        for (const id in this.Captains) {
+            if (Number(this.Captains[id].osuId) == Number(captainOsuId)) {
+                captainState = this.Captains[id];
+                break;
+            }
+        }
+
+        return captainState;
+    }
+
+    public static async getPlayerStateFromOsu(
+        query: number | string
+    ): Promise<{ id: number; name: string; tier: number } | null> {
+        let playerId: number;
+        let playerName: string;
+
+        if (typeof query === 'string') {
+            playerId = await OsuApiUtils.getOsuId(query);
+            playerName = query;
+        } else {
+            playerId = query;
+            playerName = await OsuApiUtils.getOsuUsername(playerId);
+        }
+
+        let playerTier = 0;
+
+        for (let i = 1; i < 5; i++) {
+            for (const player of PlayerConfig[i]) {
+                if (Number(player) == Number(playerId)) {
+                    playerTier = i;
+                    break;
+                }
+            }
+        }
+
+        if (playerTier === 0) {
+            return null;
+        }
+
+        return {
+            id: playerId,
+            name: playerName,
+            tier: playerTier,
+        };
     }
 
     public static async getHighestBid(): Promise<{

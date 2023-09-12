@@ -48,6 +48,43 @@ export const ChatCommandMetadata: {
         ],
     },
     */
+    CHECK: {
+        type: ApplicationCommandType.ChatInput,
+        name: 'check',
+        name_localizations: undefined,
+        description: 'Checks if a player/captain is (properly) registered in the bot.',
+        description_localizations: undefined,
+        dm_permission: true,
+        default_member_permissions: undefined,
+        options: [
+            {
+                name: 'id',
+                description: 'Check using an osu! id.',
+                type: ApplicationCommandOptionType.Subcommand,
+                options: [
+                    {
+                        name: 'value',
+                        description: 'osu! id of the person to check.',
+                        type: ApplicationCommandOptionType.Integer,
+                        required: true,
+                    },
+                ],
+            },
+            {
+                name: 'username',
+                description: 'Check a using an osu! username.',
+                type: ApplicationCommandOptionType.Subcommand,
+                options: [
+                    {
+                        name: 'value',
+                        description: 'osu! username of the person to check.',
+                        type: ApplicationCommandOptionType.String,
+                        required: true,
+                    },
+                ],
+            },
+        ],
+    },
     STARTAUCTION: {
         type: ApplicationCommandType.ChatInput,
         name: 'startauction',
