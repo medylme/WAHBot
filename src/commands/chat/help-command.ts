@@ -26,42 +26,33 @@ export class HelpCommand implements Command {
         switch (args.option) {
             case HelpOption.AUCTION: {
                 let auctionDuration = auctionConfig.auctionDuration;
-                let minBid = auctionConfig.minBid;
-                let maxBid = auctionConfig.maxBid;
-                let shufflePlayers = auctionConfig.shufflePlayers;
-                let startingBalance = auctionConfig.startingBalance;
+                let _minBid = auctionConfig.minBid;
+                let _maxBid = auctionConfig.maxBid;
+                let _shufflePlayers = auctionConfig.shufflePlayers;
+                let _startingBalance = auctionConfig.startingBalance;
 
                 embed = new EmbedBuilder()
                     .setColor(RandomUtils.getPrimaryColor())
                     .setAuthor({
                         name: 'WAH Help',
                     })
-                    .setTitle('Auctions')
-                    .setDescription(`Welcome to Waffle's Auction House! Here are the rules:
-
-                    - Players will be auctioned off one-by-one.
-                    - There are four tiers of players, with tier 4 representing the lowest seed and tier 1 the highest.
-                    - Auctions will be grouped by tier${
-                        shufflePlayers
-                            ? ', but players are shuffled within their respective tier'
-                            : ''
-                    }. The bot will show how many players are left during the auction.
-                    - Each player will be put on sale for ${auctionDuration} seconds, and the timer resets every time a new highest bid has been set.
-                    - If there were no bids placed, the player goes to a free agent pool. Captains that have yet to compose a valid team can request a player from this pool, free of charge (contact one of the hosts for this).
-                    - A valid team consists of one player from each tier, with a maximum of ten players.
-
-                    - You start with ${startingBalance} balance.
-                    - The starting bid for each player is ${minBid}.
-                    - You cannot bid more than ${maxBid} on a player.
-                    - Your bid has to be at least 50 more than the current highest bid (with exception of the starting bid).
-                    - To bid on a player, use the command \`/bid [amount]\`.
-                    - To check your current balance, use the command \`/balance\`.
-
-                    If you win, the amount will be deducted from your balance. If not, you will not be charged. And remember: **you need one player per tier in your team**!
-
-                    If you have any other questions, feel free to ask the hosts!
+                    .setTitle('Auctions').setDescription(`# Welcome to Waffle's Auction House! 
                     
-                    GLHF!`);
+First off, **please check if you are properly registered in the bot using the \`/check\` command**. If there is a mistake, contact the hosts immediately.       
+Furthermore, general information about the auction can be found on the [forum post](https://osu.ppy.sh/community/forums/topics/1808443?n=1).
+
+### With that out of the way, here are some important technical details:
+
+- Players will be auctioned off one-by-one. It will be pretty fast-paced, so make sure to keep up!
+- To bid on a player, use the command \`/bid [amount]\`.
+- To check your current balance, use the command \`/balance\`.
+- Each player will be put on sale for ${auctionDuration} seconds, and the timer resets every time a new highest bid has been set.
+- If there were no bids placed, the player goes to the free agent pool. Captains that have yet to compose a valid team can request a player from this pool by contacting one of the hosts.
+- And remember: **you need one player per tier in team**, so use your balance wisely!
+
+If you have any other questions, feel free to ask the hosts!
+
+GLHF! - dyl <3`);
                 break;
             }
             default: {
