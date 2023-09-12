@@ -34,7 +34,7 @@ export class HelpCommand implements Command {
                 embed = new EmbedBuilder()
                     .setColor(RandomUtils.getPrimaryColor())
                     .setAuthor({
-                        name: 'WAH Help',
+                        name: 'WaffleBot Help',
                     })
                     .setTitle('Auctions').setDescription(`# Welcome to Waffle's Auction House! 
                     
