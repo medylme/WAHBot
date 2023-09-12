@@ -8,6 +8,7 @@ import {
     AddEventCommand,
     BalanceCommand,
     BidCommand,
+    CheckCommand,
     ClearThreadsCommand,
     HelpCommand,
     //InfoCommand,
@@ -43,7 +44,7 @@ import {
     Logger,
 } from './services/index.js';
 import { Trigger } from './triggers/index.js';
-import { CheckUtils } from './utils/index.js';
+import { CheckUtils, StateUtils } from './utils/index.js';
 
 const require = createRequire(import.meta.url);
 let Config = require('../config/config.json');
@@ -78,6 +79,7 @@ async function start(): Promise<void> {
         new AddEventCommand(),
         new BalanceCommand(),
         new SkipPlayerCommand(),
+        new CheckCommand(),
 
         // Message Context Commands
         //new ViewDateSent(),
@@ -158,6 +160,9 @@ async function start(): Promise<void> {
         Logger.error(e.message);
         process.exit();
     }
+
+    // Auction Values
+    await StateUtils.resetAuctionStateValues();
 }
 
 process.on('unhandledRejection', (reason, _promise) => {
