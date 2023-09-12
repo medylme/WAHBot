@@ -641,15 +641,29 @@ export class StartAuctionCommand implements Command {
                 // Results 2.1: Team Members | Captain
                 resultsArray.push(auctionExportedResults[key].osuId);
 
-                // Results 2.2: Team Members| Players
+                // Results 2.2: Team Members | Players
+                let teamArray = [];
                 for (const player of auctionExportedResults[key].teammembers) {
-                    resultsArray.push(player.id);
+                    teamArray.push(player.name);
                     teamSlotsLeft--;
 
                     // Costs Array: Player
                     playersArray.push(player.id);
                     costsArray.push(player.cost);
                 }
+
+                // Results 2.2.1: Team Members | Players
+                // Sort by tier 1-4
+                teamArray.sort((a, b) => {
+                    const tierA = auctionExportedResults[key].teammembers.find(
+                        player => player.name === a
+                    ).tier;
+                    const tierB = auctionExportedResults[key].teammembers.find(
+                        player => player.name === b
+                    ).tier;
+                    return tierA - tierB;
+                });
+                resultsArray.push(...teamArray);
 
                 // Results 2.3: Empty Markers
                 for (let i = 0; i < teamSlotsLeft; i++) {
