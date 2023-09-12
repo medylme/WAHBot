@@ -10,7 +10,7 @@ export class OsuApiUtils {
 
     public static async pingApi(): Promise<boolean> {
         // Test osu! key
-        const osuEndpoint = `https://osu.ppy.sh/api/get_user?k=${this.apiKey}&u=1`;
+        const osuEndpoint = `https://osu.ppy.sh/api/get_user?k=${this.apiKey}&u=2`;
 
         try {
             const response = await fetch(osuEndpoint);
