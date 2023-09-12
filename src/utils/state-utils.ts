@@ -3,7 +3,8 @@ import { createRequire } from 'node:module';
 import { Logger } from '../services/logger.js';
 
 const require = createRequire(import.meta.url);
-const auctionConfig = require('../../config/tournament/config.json');
+const CaptainConfig = require('../../config/tournament/captains.json');
+const AuctionConfig = require('../../config/tournament/config.json');
 
 export interface AuctionState {
     status: string;
@@ -101,9 +102,6 @@ export class StateUtils {
     private static Captains: Captains = {};
 
     public static async resetAuctionStateValues(): Promise<void> {
-        let AuctionConfig = require('../../config/tournament/config.json');
-        let CaptainConfig = require('../../config/tournament/captains.json');
-
         this.AuctionState = { ...this.AuctionStateDefaults };
         this.AuctionStats = { ...this.AuctionStatsDefaults };
         this.FreeAgents = [];
@@ -157,6 +155,24 @@ export class StateUtils {
                 Logger.debug(`State '${key}' changed to ${values[key as K]}`);
             }
         });
+
+        /*
+        // Change status based on auction state
+        switch (this.AuctionState.status) {
+            case 'running':
+                client.user.setStatus('online');
+                client.user.setActivity(auctionConfig.threadPrefix, {
+                    type: ActivityType.Competing,
+                });
+                Logger.debug('Set bot status to "online" and updated status.');
+                break;
+            default:
+                client.user.setStatus('idle');
+                client.user.setActivity();
+                Logger.debug('Set bot status to "idle" and cleared status.');
+                break;
+        }
+        */
     }
 
     public static async getTimeRemaining(): Promise<number> {
@@ -250,7 +266,7 @@ export class StateUtils {
         ) {
             this.AuctionStats.mostValuablePlayer = this.AuctionState.currentPlayerName;
             this.AuctionStats.mostValuablePlayerTier =
-                auctionConfig.tierOrder[this.AuctionState.currentTierIndex];
+                AuctionConfig.tierOrder[this.AuctionState.currentTierIndex];
             this.AuctionStats.mostValuablePlayerValue = playerCost;
             this.AuctionStats.mostValuablePlayerTeam = this.Captains[captainId].teamname;
         }
