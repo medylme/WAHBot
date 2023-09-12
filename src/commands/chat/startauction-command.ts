@@ -180,7 +180,9 @@ export class StartAuctionCommand implements Command {
         const auctionDuration: number = AuctionConfig.auctionDuration;
 
         Logger.info(
-            `Auctioning player Tier ${currentTier} #${currentPlayerIndex} '${username}' (${currentPlayer})...`
+            `Auctioning player Tier ${currentTier} #${
+                currentPlayerIndex + 1
+            } '${username}' (${currentPlayer})...`
         );
 
         // Create thread
