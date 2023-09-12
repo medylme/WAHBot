@@ -397,7 +397,7 @@ export class StartAuctionCommand implements Command {
 
         // Start auction
         Logger.info(
-            `Auction started by user '${intr.user.tag}' (${intr.user.id}) in channel '${channel.name}!' (${channel.id}) in guild '${channel.guild.name}' (${channel.guild.id})!`
+            `Auction started by @${intr.user.username} (${intr.user.id}) in channel '${channel.name}!' (${channel.id}) in guild '${channel.guild.name}' (${channel.guild.id})!`
         );
 
         // If resuming, load data from file

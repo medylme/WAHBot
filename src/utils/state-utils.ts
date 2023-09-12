@@ -211,10 +211,12 @@ export class StateUtils {
         this.AuctionState.highestBidderId = captainId.toString();
         this.AuctionStats.totalBids++;
 
-        Logger.info(`New highest bid: ${bid} - ${this.Captains[captainId].name}`);
+        Logger.info(`New highest bid by ${this.Captains[captainId].name} - ${bid}`);
     }
 
     public static async MovePlayerToFreeAgents(): Promise<void> {
+        Logger.info(`No bids. Player moved to free agents.`);
+
         let playerId = this.AuctionState.currentPlayer;
         let playerName = this.AuctionState.currentPlayerName;
 
@@ -271,7 +273,7 @@ export class StateUtils {
             this.AuctionStats.mostValuablePlayerTeam = this.Captains[captainId].teamname;
         }
 
-        Logger.info(`Player sold: ${playerCost} - ${this.Captains[captainId].name}`);
+        Logger.info(`Player sold to '${this.Captains[captainId].name}' for ${playerCost}.`);
     }
 
     public static async GetBalance(captainId: string): Promise<number> {
