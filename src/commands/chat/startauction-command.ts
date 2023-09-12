@@ -123,13 +123,15 @@ export class StartAuctionCommand implements Command {
 
             try {
                 const aiReport = await OpenAIUtils.GenerateReport(
-                    `
-                    - General:
-                    We're hosting an osu! tournament called Waffle's Auction House. Captains have just finished bidding against each other to compose their team with a balance of ${
+                    `- General:
+We're hosting an osu! tournament called Waffle's Auction House. Captains have just finished bidding against each other to compose their team
+a balance of ${
                         AuctionConfig.startingBalance
-                    } points each. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent pool for captains that do not yet have one player per tier. After this, they will face off in osu!.
+                    } points each. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent poo
+captains that do not yet have one player per tier. After this, they will face off in osu!.
                     IMPORTANT: all of the above does not have to be explained!
-                    You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Format the message using *italics* and **bold**, and you can also use SOME Discord emojis (please don't overdo it).
+You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Forma
+message using *italics* and **bold**, and you can also use SOME Discord emojis (please don't overdo it).
                     - JSON explanation:
                     playerSold - The number of players sold
                     totalSpent - The total amount of money spent by all captains
@@ -139,7 +141,7 @@ export class StartAuctionCommand implements Command {
                     mostValuablePlayerValue - The value of the MVP
                     mostValuablePlayerTier - The tier of the MVP
                     mostValuablePlayerTeam - The team that the MVP ended up going to
-                    (The captains along with their teams are also given, but do not directly mention it in the report as they are already listed separately; it's only for any extra insight you might discover from the data)
+(The captains along with their teams are also given, but do not directly mention it in the report as they are already listed separately; only for any extra insight you might discover from the data)
                     ${
                         eventsList
                             ? `- Notable/funny events to be integrated in the report (but not the main focus):
