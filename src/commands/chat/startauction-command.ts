@@ -129,27 +129,27 @@ a balance of ${
                         AuctionConfig.startingBalance
                     } points each. Players are seeded in Tiers 1-4 according to their rank in osu! (Tier 1 is best). Unsold players will go to a free agent poo
 captains that do not yet have one player per tier. After this, they will face off in osu!.
-                    IMPORTANT: all of the above does not have to be explained!
+IMPORTANT: all of the above does not have to be explained!
 You are WaffleBot, the Discord bot that has just been used to do the auction. Generate a fun presentation for the players to read. Forma
 message using *italics* and **bold**, and you can also use SOME Discord emojis (please don't overdo it).
-                    - JSON explanation:
-                    playerSold - The number of players sold
-                    totalSpent - The total amount of money spent by all captains
-                    totalBids - The total number of bids made by all captains
-                    totalPlayers - The total number of players in the tournament
-                    mostValuablePlayer - The player that was sold for the most money first
-                    mostValuablePlayerValue - The value of the MVP
-                    mostValuablePlayerTier - The tier of the MVP
-                    mostValuablePlayerTeam - The team that the MVP ended up going to
+- JSON explanation:
+playerSold - The number of players sold
+totalSpent - The total amount of money spent by all captains
+totalBids - The total number of bids made by all captains
+totalPlayers - The total number of players in the tournament
+mostValuablePlayer - The player that was sold for the most money first
+mostValuablePlayerValue - The value of the MVP
+mostValuablePlayerTier - The tier of the MVP
+mostValuablePlayerTeam - The team that the MVP ended up going to
 (The captains along with their teams are also given, but do not directly mention it in the report as they are already listed separately; only for any extra insight you might discover from the data)
-                    ${
-                        eventsList
-                            ? `- Notable/funny events to be integrated in the report (but not the main focus):
-                    ${eventsList.map(event => event).join('\n')}
-                    `
-                            : ''
-                    }
-                    `,
+${
+    eventsList
+        ? `- Notable/funny events to be integrated in the report (but not the main focus):
+${eventsList.map(event => event).join('\n')}
+`
+        : ''
+}
+`,
                     _auctionStatsObject
                 );
                 const aiReportEmbed = new EmbedBuilder()
@@ -410,16 +410,22 @@ message using *italics* and **bold**, and you can also use SOME Discord emojis (
             let PausedStateFile = require('../../../result/paused.json');
             try {
                 const resumeData = PausedStateFile as ResumeData;
-                Logger.info(`'resume.json' found, resuming auction from file...`);
+                Logger.info(`Pause state file found, resuming auction...`);
 
+                resumeData.auctionState.status = 'running';
+
+                // Current Tier & Player
                 initialTierIndex = resumeData.auctionState.currentTierIndex;
+                currentPlayerIndex = resumeData.currentPlayerIndex;
+
+                // Player Order
                 shuffledPlayers = resumeData.shuffledPlayers;
                 for (const key in shuffledPlayers) {
                     PlayersData[key] = shuffledPlayers[key];
                 }
                 Logger.info('Player Order (From Paused State):', PlayersData);
-                currentPlayerIndex = resumeData.currentPlayerIndex;
-                resumeData.auctionState.status = 'running';
+
+                // Misc.
                 await StateUtils.ResumeAuction(resumeData);
 
                 fs.unlink('./result/paused.json', err => {
@@ -474,9 +480,9 @@ message using *italics* and **bold**, and you can also use SOME Discord emojis (
 
         await delay(10000);
 
-        // Auction per tier
-        let pausedTierIndex = 0;
-        let pausedPlayerIndex = 0;
+        // Pause Data variables
+        let pauseTierIndex = 0;
+        let pausePlayerIndex = 0;
 
         const tierOrder = AuctionConfig.tierOrder;
         for (let i = initialTierIndex; i < tierOrder.length; i++) {
@@ -484,11 +490,6 @@ message using *italics* and **bold**, and you can also use SOME Discord emojis (
             if ((await StateUtils.getStatus()) === 'aborting') {
                 break;
             } else if ((await StateUtils.getStatus()) === 'pausing') {
-                if (i > 0) {
-                    pausedTierIndex = i - 1;
-                } else {
-                    pausedTierIndex = 0;
-                }
                 break;
             }
 
@@ -513,9 +514,9 @@ message using *italics* and **bold**, and you can also use SOME Discord emojis (
             await delay(5000);
 
             // Auction each player
-            let playerList = PlayersData[currentTier];
-            for (let u = resuming ? currentPlayerIndex : 0; u < playerList.length; u++) {
-                const currentPlayerId = playerList[u];
+            let currentPlayerList = PlayersData[currentTier];
+            for (let u = resuming ? currentPlayerIndex : 0; u < currentPlayerList.length; u++) {
+                const currentPlayerId = currentPlayerList[u];
 
                 // Get player info
                 const apiLink = `https://osu.ppy.sh/api/get_user?k=${ApiKeyConfig.osuApiKey}&u=${currentPlayerId}&m=0&type=id`;
@@ -545,23 +546,23 @@ message using *italics* and **bold**, and you can also use SOME Discord emojis (
                     currentPlayerId,
                     u,
                     username,
-                    playerList
+                    currentPlayerList
                 );
-
-                // If last cycle was the last player in the tier,
-                // reset current player index to 0 and increment tier index before breaking
-                if (u === playerList.length - 1) {
-                    this.pauseData.currentPlayerIndex = 0;
-                    u++;
-                } else {
-                    this.pauseData.currentPlayerIndex = currentPlayerIndex + 1;
-                }
 
                 // Check if auction is queued to pause or abort
                 if ((await StateUtils.getStatus()) === 'aborting') {
                     break;
                 } else if ((await StateUtils.getStatus()) === 'pausing') {
-                    pausedPlayerIndex = u;
+                    // If last cycle was the last player in the tier,
+                    // reset current player index to 0 and increment tier index before breaking
+                    if (u === currentPlayerList.length - 1) {
+                        pausePlayerIndex = 0;
+                        pauseTierIndex = i + 1;
+                    } else {
+                        pausePlayerIndex = currentPlayerIndex + 1;
+                        pauseTierIndex = i;
+                    }
+
                     break;
                 }
             }
@@ -571,22 +572,22 @@ message using *italics* and **bold**, and you can also use SOME Discord emojis (
         const completionEmbed = new EmbedBuilder();
         switch (await StateUtils.getStatus()) {
             case 'pausing':
-                Logger.debug('Writing pausing state...');
-                StateUtils.writeAuctionStateValues({
-                    currentTierIndex: pausedTierIndex,
-                });
                 this.pauseData.auctionState = await StateUtils.getState();
+                this.pauseData.auctionState.status = 'idle';
+                this.pauseData.auctionState.currentTierIndex = pauseTierIndex;
+                this.pauseData.auctionState.currentTier = tierOrder[pauseTierIndex];
+                this.pauseData.auctionState.currentPlayer = undefined;
+                this.pauseData.auctionState.currentPlayerName = undefined;
+
                 this.pauseData.auctionStats = await StateUtils.GetAuctionStats();
                 for (const key in PlayersData) {
                     this.pauseData.shuffledPlayers[key] = PlayersData[key];
                 }
                 this.pauseData.freeAgents = await StateUtils.GetFreeAgentObject();
-                this.pauseData.auctionState.status = 'idle';
                 this.pauseData.captains = await StateUtils.GetAuctionResults();
-                this.pauseData.currentPlayerIndex = pausedPlayerIndex;
+                this.pauseData.currentPlayerIndex = pausePlayerIndex;
                 try {
                     await writeToFile('./result/paused.json', JSON.stringify(this.pauseData));
-
                     Logger.debug('Wrote pause data:', this.pauseData);
 
                     await StateUtils.resetAuctionStateValues();
