@@ -30,11 +30,13 @@ export class ClearThreadsCommand implements Command {
         const channel: TextChannel = intr.channel as TextChannel;
         const auctionChannel = (await channel.guild.channels.fetch(channel.id)) as TextChannel;
 
+        const threadPrefix = AuctionConfig.threadPrefix;
+
         const confirmEmbed = new EmbedBuilder()
             .setColor(RandomUtils.getDangerColor())
             .setTitle('Confirm?')
             .setDescription(
-                'Are you sure you want to clear all auction threads in the current channel? This will only delete threads pertaining to the current auction, but cannot be undone!'
+                `Are you sure you want to clear all auction threads in the current channel? This will only delete threads starting with "*${threadPrefix}*", but cannot be undone!`
             );
 
         let prompt = await intr.editReply({
@@ -92,10 +94,9 @@ export class ClearThreadsCommand implements Command {
             const stoppedEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('Deleting...')
-                .setDescription('Deleting all threads in the current channel...');
+                .setDescription(`Deleting all auction threads in the current channel...`);
             await intr.editReply({ embeds: [stoppedEmbed], components: [] });
 
-            const threadPrefix = AuctionConfig.threadPrefix;
             const activeThreads: FetchedThreads = await auctionChannel.threads.fetchActive();
             const archivedThreads: FetchedThreads = await auctionChannel.threads.fetchArchived();
             const allThreads = activeThreads.threads.concat(archivedThreads.threads);
@@ -109,14 +110,12 @@ export class ClearThreadsCommand implements Command {
                 await thread.delete();
             }
 
-            Logger.info(
-                `All threads in auction channel deleted by ${intr.user.tag} (${intr.user.id})`
-            );
+            Logger.info(`All auction threads deleted by ${intr.user.tag} (${intr.user.id})`);
 
             const successEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('Done!')
-                .setDescription('Deleted all threads in the current channel.');
+                .setDescription('Deleted all auction threads in the current channel.');
             await intr.editReply({ embeds: [successEmbed], components: [] });
         } else {
             await intr.deleteReply();
