@@ -38,6 +38,26 @@ export class BidCommand implements Command {
             return;
         }
 
+        // Check if an auction is currently running
+        if (state.status !== 'running') {
+            const notOngoingEmbed = new EmbedBuilder()
+                .setTitle('No ongoing auction (yet)')
+                .setDescription(`There is currently no auction running.`)
+                .setColor(RandomUtils.getSecondaryColor());
+            await InteractionUtils.send(intr, notOngoingEmbed);
+            return;
+        }
+
+        // Check if bidding is open
+        if (!state.biddingActive) {
+            const biddingNotActiveEmbed = new EmbedBuilder()
+                .setTitle('Bidding not active')
+                .setDescription(`Bidding is currently not active.`)
+                .setColor(RandomUtils.getSecondaryColor());
+            await InteractionUtils.send(intr, biddingNotActiveEmbed);
+            return;
+        }
+
         // Check if team is already full
         const maxTeamSize = AuctionConfig.maxTeamSize;
         const currentTeam = await StateUtils.GetTeam(intr.user.id);
@@ -49,15 +69,6 @@ export class BidCommand implements Command {
                 )
                 .setColor(RandomUtils.getDangerColor());
             await InteractionUtils.send(intr, teamFullEmbed);
-            return;
-        }
-        // Check if bidding is open
-        if (!state.biddingActive) {
-            const biddingNotActiveEmbed = new EmbedBuilder()
-                .setTitle('Bidding not active')
-                .setDescription(`Bidding is currently not active.`)
-                .setColor(RandomUtils.getSecondaryColor());
-            await InteractionUtils.send(intr, biddingNotActiveEmbed);
             return;
         }
 
