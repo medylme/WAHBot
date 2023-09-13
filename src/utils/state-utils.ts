@@ -48,7 +48,7 @@ export interface AuctionStats {
     totalPlayers: number;
 }
 
-interface TeamMembers {
+export interface TeamMembers {
     id: string;
     name: string;
     tier: number;

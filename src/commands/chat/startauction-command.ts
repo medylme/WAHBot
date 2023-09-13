@@ -13,7 +13,7 @@ import util from 'node:util';
 import { EventData } from '../../models/internal-models.js';
 import { Logger } from '../../services/logger.js';
 import { InteractionUtils, OpenAIUtils, RandomUtils, StateUtils } from '../../utils/index.js';
-import { PlayersList, ResumeData } from '../../utils/state-utils.js';
+import { PlayersList, ResumeData, TeamMembers } from '../../utils/state-utils.js';
 import { Command, CommandDeferType } from '../index.js';
 
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -655,9 +655,9 @@ ${eventsList.map(event => event).join('\n')}
                 resultsArray.push(auctionExportedResults[key].osuId);
 
                 // Results 2.2: Team Members | Players
-                let teamArray = [];
+                let teamArray: TeamMembers[] = [];
                 for (const player of auctionExportedResults[key].teammembers) {
-                    teamArray.push(player.name);
+                    teamArray.push(player);
                     teamSlotsLeft--;
 
                     // Costs Array: Player
@@ -668,15 +668,11 @@ ${eventsList.map(event => event).join('\n')}
                 // Results 2.2.1: Team Members | Players
                 // Sort by tier 1-4
                 teamArray.sort((a, b) => {
-                    const tierA = auctionExportedResults[key].teammembers.find(
-                        player => player.name === a
-                    ).tier;
-                    const tierB = auctionExportedResults[key].teammembers.find(
-                        player => player.name === b
-                    ).tier;
-                    return tierA - tierB;
+                    return a.tier - b.tier;
                 });
-                resultsArray.push(...teamArray);
+                for (const player of teamArray) {
+                    resultsArray.push(player.id);
+                }
 
                 // Results 2.3: Empty Markers
                 for (let i = 0; i < teamSlotsLeft; i++) {
