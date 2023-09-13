@@ -97,7 +97,7 @@ export class SkipPlayerCommand implements Command {
             await intr.deleteReply();
             return;
         } else if (result.value === 'confirmed') {
-            Logger.info(`Timer skipped by ${intr.user.tag} (${intr.user.id}).`);
+            Logger.info(`Timer skipped by ${intr.user.username} (${intr.user.id}).`);
 
             StateUtils.writeAuctionStateValues({
                 timeRemaining: 0,

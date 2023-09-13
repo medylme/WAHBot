@@ -271,7 +271,7 @@ export class StateUtils {
         this.AuctionState.highestBidderId = captainId.toString();
         this.AuctionStats.totalBids++;
 
-        Logger.info(`New highest bid by ${this.Captains[captainId].name} - ${bid}`);
+        Logger.info(`New highest bid by '${this.Captains[captainId].name}' - ${bid}`);
     }
 
     public static async MovePlayerToFreeAgents(): Promise<void> {
