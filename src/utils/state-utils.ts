@@ -364,9 +364,6 @@ export class StateUtils {
 
     // Pausing and resuming
     public static async ResumeAuction(resumeData: ResumeData): Promise<void> {
-        // Reset auction state
-        await this.resetAuctionStateValues();
-
         // Set auction state
         this.AuctionState = {
             ...this.AuctionState,

@@ -402,6 +402,9 @@ ${eventsList.map(event => event).join('\n')}
             `Auction started by @${intr.user.username} (${intr.user.id}) in channel '${channel.name}!' (${channel.id}) in guild '${channel.guild.name}' (${channel.guild.id})!`
         );
 
+        // Reset auction state
+        await StateUtils.resetAuctionStateValues();
+
         // If resuming, load data from file
         // Otherwise, start auction from scratch
         const startingAnnouncementEmbed = new EmbedBuilder();
@@ -417,6 +420,9 @@ ${eventsList.map(event => event).join('\n')}
                 // Current Tier & Player
                 initialTierIndex = resumeData.auctionState.currentTierIndex;
                 currentPlayerIndex = resumeData.currentPlayerIndex;
+                Logger.debug(
+                    `Resuming from: Tier Index ${initialTierIndex} & Player Index ${currentPlayerIndex}`
+                );
 
                 // Player Order
                 shuffledPlayers = resumeData.shuffledPlayers;
@@ -440,6 +446,10 @@ ${eventsList.map(event => event).join('\n')}
                     .setColor(RandomUtils.getPrimaryColor())
                     .setTitle('Auction resuming.')
                     .setDescription('The auction will be resumed shortly!');
+
+                await StateUtils.writeAuctionStateValues({
+                    status: 'running',
+                });
             } catch (e) {
                 Logger.error(
                     `Error reading resume file, please check or delete the file! Aborting.`,
