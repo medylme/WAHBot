@@ -51,6 +51,7 @@ export class CheckUtils {
     private static checkConfig(): void {
         if (
             !AuctionConfig.auctionDuration ||
+            !AuctionConfig.resetDuration ||
             !AuctionConfig.maxBid ||
             !AuctionConfig.minBid ||
             !AuctionConfig.minBidIncrement ||
@@ -64,10 +65,72 @@ export class CheckUtils {
             throw new Error('Tournament config is missing required fields!');
         }
 
+        // Type Checks
+
+        if (typeof AuctionConfig.shufflePlayers !== 'boolean') {
+            throw new Error(`Shuffle players must be true or false!`);
+        }
+
+        if (typeof AuctionConfig.auctionDuration !== 'number') {
+            throw new Error(`Auction duration must be a number!`);
+        }
+
+        if (typeof AuctionConfig.resetDuration !== 'number') {
+            throw new Error(`Reset duration must be a number!`);
+        }
+
+        if (typeof AuctionConfig.minBid !== 'number') {
+            throw new Error(`Min bid must be a number!`);
+        }
+
+        if (typeof AuctionConfig.maxBid !== 'number') {
+            throw new Error(`Max bid must be a number!`);
+        }
+
+        if (typeof AuctionConfig.minBidIncrement !== 'number') {
+            throw new Error(`Min bid increment must be a number!`);
+        }
+
+        if (typeof AuctionConfig.maxBidIncrement !== 'number') {
+            throw new Error(`Max bid increment must be a number!`);
+        }
+
+        if (typeof AuctionConfig.startingBalance !== 'number') {
+            throw new Error(`Starting balance must be a number!`);
+        }
+
+        if (typeof AuctionConfig.maxTeamSize !== 'number') {
+            throw new Error(`Max team size must be a number!`);
+        }
+
+        if (typeof AuctionConfig.shufflePlayers !== 'boolean') {
+            throw new Error(`Shuffle players must be a boolean!`);
+        }
+
+        if (typeof AuctionConfig.AIReport !== 'boolean') {
+            throw new Error(`AI report must be a boolean!`);
+        }
+
+        if (typeof AuctionConfig.threadPrefix !== 'string') {
+            throw new Error(`Thread prefix must be a string!`);
+        }
+
+        // Content Checks
+
         if (AuctionConfig.auctionDuration < 1 || AuctionConfig.auctionDuration > 1440) {
             throw new Error(
                 `Auction duration must be greater than 0! Please use a value between 1 and 1440.`
             );
+        }
+
+        if (AuctionConfig.resetDuration < 1 || AuctionConfig.resetDuration > 1440) {
+            throw new Error(
+                `Auction duration must be greater than 0! Please use a value between 1 and 1440.`
+            );
+        }
+
+        if (AuctionConfig.resetDuration > AuctionConfig.auctionDuration) {
+            throw new Error(`Reset duration must be less than auction duration!`);
         }
 
         if (AuctionConfig.minBid < 1 || AuctionConfig.minBid > 1000000) {
@@ -121,50 +184,6 @@ export class CheckUtils {
             throw new Error(
                 `Max team size must be greater than 0! Please use a value between 1 and 100.`
             );
-        }
-
-        if (typeof AuctionConfig.shufflePlayers !== 'boolean') {
-            throw new Error(`Shuffle players must be true or false!`);
-        }
-
-        if (typeof AuctionConfig.auctionDuration !== 'number') {
-            throw new Error(`Auction duration must be a number!`);
-        }
-
-        if (typeof AuctionConfig.minBid !== 'number') {
-            throw new Error(`Min bid must be a number!`);
-        }
-
-        if (typeof AuctionConfig.maxBid !== 'number') {
-            throw new Error(`Max bid must be a number!`);
-        }
-
-        if (typeof AuctionConfig.minBidIncrement !== 'number') {
-            throw new Error(`Min bid increment must be a number!`);
-        }
-
-        if (typeof AuctionConfig.maxBidIncrement !== 'number') {
-            throw new Error(`Max bid increment must be a number!`);
-        }
-
-        if (typeof AuctionConfig.startingBalance !== 'number') {
-            throw new Error(`Starting balance must be a number!`);
-        }
-
-        if (typeof AuctionConfig.maxTeamSize !== 'number') {
-            throw new Error(`Max team size must be a number!`);
-        }
-
-        if (typeof AuctionConfig.shufflePlayers !== 'boolean') {
-            throw new Error(`Shuffle players must be a boolean!`);
-        }
-
-        if (typeof AuctionConfig.AIReport !== 'boolean') {
-            throw new Error(`AI report must be a boolean!`);
-        }
-
-        if (typeof AuctionConfig.threadPrefix !== 'string') {
-            throw new Error(`Thread prefix must be a string!`);
         }
     }
 

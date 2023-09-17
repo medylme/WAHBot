@@ -343,7 +343,7 @@ ${eventsList.map(event => event).join('\n')}
             );
         }
 
-        await delay(10 * 1000);
+        await delay(3 * 1000);
         await thread.setArchived(true);
     }
 
@@ -521,7 +521,7 @@ ${eventsList.map(event => event).join('\n')}
                 .setTitle(`Tier ${currentTier} players!`);
             await auctionChannel.send({ embeds: [NextTierEmbed] });
 
-            await delay(5000);
+            await delay(2000);
 
             // Auction each player
             let currentPlayerList = PlayersData[currentTier];

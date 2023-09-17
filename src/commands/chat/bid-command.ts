@@ -167,10 +167,14 @@ export class BidCommand implements Command {
         await currentThread.send({ embeds: [highestBidEmbed] });
 
         // Reset bid timer
-        const auctionDuration = AuctionConfig.auctionDuration as number;
-        StateUtils.writeAuctionStateValues({
-            timeRemaining: auctionDuration,
-        });
+        const timeRemaining = await StateUtils.getTimeRemaining();
+        const resetDuration = AuctionConfig.resetDuration as number;
+
+        if (timeRemaining < resetDuration) {
+            StateUtils.writeAuctionStateValues({
+                timeRemaining: resetDuration,
+            });
+        }
 
         await intr.deleteReply();
     }
