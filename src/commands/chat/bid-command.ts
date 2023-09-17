@@ -39,7 +39,7 @@ export class BidCommand implements Command {
         }
 
         // Check if an auction is currently running
-        if (state.status !== 'running') {
+        if (state.status === 'idle') {
             const notOngoingEmbed = new EmbedBuilder()
                 .setTitle('No ongoing auction (yet)')
                 .setDescription(`There is currently no auction running.`)
