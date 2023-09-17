@@ -521,7 +521,7 @@ ${eventsList.map(event => event).join('\n')}
                 .setTitle(`Tier ${currentTier} players!`);
             await auctionChannel.send({ embeds: [NextTierEmbed] });
 
-            await delay(2000);
+            await delay(5000);
 
             // Auction each player
             let currentPlayerList = PlayersData[currentTier];
