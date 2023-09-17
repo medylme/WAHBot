@@ -269,7 +269,7 @@ ${eventsList.map(event => event).join('\n')}
 
                 // Update time remaining in thread
                 await mainChannelMessage.edit(
-                    `Bidding for **${username}** has started! \nTime remaining: **${timeRemaining}** seconds!`
+                    `Bidding for **${username}** has started! \nTime remaining: **${timeRemaining}** seconds.`
                 );
 
                 // Decrement time remaining in state
@@ -295,22 +295,25 @@ ${eventsList.map(event => event).join('\n')}
         await delay(1000);
 
         // Announce winner in thread and main channel
+        const playersLeft = playerList.length - currentPlayerIndex - 1;
+        const playersLeftMessage = `${
+            playersLeft > 1
+                ? 'There is only **1** player left in this tier'
+                : `There are **${playersLeft}** players left in this tier`
+        } (make sure you get at least one per tier)!`;
+
         const highestBidObject = await StateUtils.getHighestBid();
         if (highestBidObject == undefined) {
             const noBidsEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('No bids!')
-                .setDescription(
-                    'No one bid on this player. They will be placed in the free agent pool.'
-                );
+                .setDescription('This player was sent to the free agent pool.');
             await thread.send({ embeds: [noBidsEmbed] });
 
             await StateUtils.MovePlayerToFreeAgents();
 
             await mainChannelMessage.edit(
-                `No one bid on this player. They will be placed in the free agent pool. \nThere are **${
-                    playerList.length - currentPlayerIndex - 1
-                }** player(s) left in this tier (make sure you get at least one per tier)!`
+                `No one bid on this player. They will be placed in the free agent pool. \n${playersLeftMessage}`
             );
         } else {
             // Add player to winner's team
@@ -318,14 +321,21 @@ ${eventsList.map(event => event).join('\n')}
 
             // Announce winner in thread and main channel
             const highestBid = highestBidObject.bid;
-            const highestBidder = highestBidObject.bidderName;
+            const highestBidderId = highestBidObject.bidderId;
+            const highestBidderTeamName = await StateUtils.GetTeamName(highestBidderId);
+            const highestBidderName = highestBidObject.bidderName;
             const soldThreadEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getPrimaryColor())
                 .setTitle('Sold!')
                 .setFields([
                     {
-                        name: 'Sold to',
-                        value: `${highestBidder}`,
+                        name: 'Captain',
+                        value: `${highestBidderName}`,
+                        inline: true,
+                    },
+                    {
+                        name: 'Team',
+                        value: `${highestBidderTeamName}`,
                         inline: true,
                     },
                     {
@@ -337,9 +347,7 @@ ${eventsList.map(event => event).join('\n')}
             await thread.send({ embeds: [soldThreadEmbed] });
 
             await mainChannelMessage.edit(
-                `**${username}** has been sold to **${highestBidder}** for **${highestBid}** points! \nThere are **${
-                    playerList.length - currentPlayerIndex - 1
-                }** player(s) left in this tier.`
+                `**${username}** has been sold to **${highestBidderName}** for **${highestBid}**! \n${playersLeftMessage}`
             );
         }
 

@@ -340,8 +340,12 @@ export class StateUtils {
         return this.Captains[captainId].balance;
     }
 
-    public static async GetTeam(captainId: string): Promise<object[]> {
+    public static async GetTeamMembers(captainId: string): Promise<object[]> {
         return this.Captains[captainId].teammembers;
+    }
+
+    public static async GetTeamName(captainId: string): Promise<string> {
+        return this.Captains[captainId].teamname;
     }
 
     public static async GetAuctionResults(): Promise<Captains> {
