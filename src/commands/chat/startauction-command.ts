@@ -462,7 +462,7 @@ ${eventsList.map(event => event).join('\n')}
                 .setColor(RandomUtils.getPrimaryColor())
                 .setTitle('Auction starting!')
                 .setDescription(
-                    'The auction will be starting shortly. The bidding will be pretty fast-paced, so be ready! \n\n**Captains:** Make sure you have read `/help auction`!'
+                    'The auction will be starting shortly. The bidding will be pretty fast-paced, so be ready! \n\nNote: Bidding will take place **inside of each thread**.'
                 );
 
             await StateUtils.resetAuctionStateValues();
