@@ -299,8 +299,8 @@ ${eventsList.map(event => event).join('\n')}
         const playersLeftMessage = `${
             playersLeft > 1
                 ? 'There is only **1** player left in this tier'
-                : `There are **${playersLeft}** players left in this tier`
-        } (make sure you get at least one per tier)!`;
+                : `There are **${playersLeft}** players left in this tier (make sure you get at least one per tier)`
+        }!`;
 
         const highestBidObject = await StateUtils.getHighestBid();
         if (highestBidObject == undefined) {
