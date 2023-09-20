@@ -105,7 +105,7 @@ export class PauseAuctionCommand implements Command {
             await intr.deleteReply();
             return;
         } else if (result.value === 'confirmed') {
-            Logger.info(`Auction queued to pause by ${intr.user.tag} (${intr.user.id})`);
+            Logger.info(`Auction queued to pause by ${intr.user.username} (${intr.user.id})`);
 
             StateUtils.writeAuctionStateValues({
                 status: 'pausing',
