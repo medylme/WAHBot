@@ -16,6 +16,8 @@ export class OsuApiUtils {
             const response = await fetch(osuEndpoint);
             const data = await response.json();
 
+            Logger.debug('osu! api | ping', data);
+
             if (data.error) {
                 throw new Error(data.error);
             }
@@ -47,6 +49,8 @@ export class OsuApiUtils {
                 return null;
             }
 
+            //  Logger.debug('osu! api | get_user from username:', data);
+
             return data[0].user_id as number;
         } catch (err) {
             Logger.error(err);
@@ -69,6 +73,8 @@ export class OsuApiUtils {
             if (data.length === 0) {
                 return null;
             }
+
+            // Logger.debug('osu! api | get_user from id:', data);
 
             return data[0].username as string;
         } catch (err) {
