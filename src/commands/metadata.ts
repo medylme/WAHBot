@@ -172,7 +172,7 @@ export const ChatCommandMetadata: {
         name_localizations: undefined,
         description: 'Shows your current balance (assuming there is an ongoing auction).',
         description_localizations: undefined,
-        dm_permission: true,
+        dm_permission: false,
         default_member_permissions: undefined,
     },
 };
