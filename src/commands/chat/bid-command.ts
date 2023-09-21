@@ -111,41 +111,33 @@ export class BidCommand implements Command {
         // Check if bid is valid:
         // - Higher than current bid + min increment
         // - Lower than max increment
-        let highestBidObject = await StateUtils.getHighestBid();
-        if (highestBidObject != undefined) {
-            const currentHighestBid = highestBidObject.bid;
-            const currentHighestBidderId = highestBidObject.bidderId;
-            const currentHighestBidderName = highestBidObject.bidderName;
+        const minBid = AuctionConfig.minBid as number;
+        const currentHighestBid = await StateUtils.getHighestBid();
 
-            const minIncrement = AuctionConfig.minIncrement as number;
-            const maxIncrement = AuctionConfig.maxIncrement as number;
+        if (currentHighestBid > minBid) {
+            const minIncrement = AuctionConfig.minBidIncrement as number;
+            const maxIncrement = AuctionConfig.maxBidIncrement as number;
 
-            // - Lower than max increment
-            const maxThreshold = currentHighestBid + maxIncrement;
-            if (bidAmount > maxThreshold) {
+            // - Upper bound threshold
+            const upperBound = currentHighestBid + maxIncrement;
+            if (bidAmount > upperBound) {
                 const maxBidExceededEmbed = new EmbedBuilder()
                     .setTitle('Bid too high')
                     .setDescription(
-                        `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}** (You need to bid **${upperThreshold}** or lower).`
+                        `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}**; You need to bid **${upperBound}** or lower!`
                     )
                     .setColor(RandomUtils.getSecondaryColor());
                 await InteractionUtils.send(intr, maxBidExceededEmbed);
                 return;
             }
 
-            // - Higher than current bid + min increment
-            let minThreshold = currentHighestBid;
-            if (currentHighestBid > 100) minThreshold += minIncrement; // Does not apply to first bid
-
-            if (bidAmount < minThreshold) {
+            // - Lower bound threshold
+            let lowerBound = currentHighestBid + minIncrement;
+            if (bidAmount < lowerBound) {
                 const notHighestBidEmbed = new EmbedBuilder()
                     .setTitle('Bid too low')
                     .setDescription(
-                        `Your bid of **${bidAmount}** must be at least 50 higher than the current highest bid of **${currentHighestBid}** by **${
-                            currentHighestBidderId == intr.user.id
-                                ? 'you'
-                                : currentHighestBidderName
-                        }**.`
+                        `Your bid of **${bidAmount}** must exceed the min increment of **${minIncrement}**; You need to bid **${lowerBound}** or higher!`
                     );
 
                 await InteractionUtils.send(intr, notHighestBidEmbed);
@@ -154,15 +146,15 @@ export class BidCommand implements Command {
         }
 
         // Set new highest bid
-        StateUtils.setHighestBid(intr.user.id, bidAmount);
+        await StateUtils.setHighestBid(intr.user.id, bidAmount);
 
         // Send new highest bid message in thread
-        highestBidObject = await StateUtils.getHighestBid();
+        const newHighestBidObject = await StateUtils.getHighestBidObject();
         const highestBidEmbed = new EmbedBuilder()
             .setTitle('New highest bid!')
             .setDescription(
                 `**${
-                    highestBidObject.bidderName
+                    newHighestBidObject.bidderName
                 }** (${intr.user.toString()}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.`
             )
             .setColor(RandomUtils.getTertiaryColor());

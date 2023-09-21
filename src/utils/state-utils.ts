@@ -248,15 +248,15 @@ export class StateUtils {
         };
     }
 
-    public static async getHighestBid(): Promise<{
+    public static async getHighestBid(): Promise<number> {
+        return this.AuctionState.highestBid;
+    }
+
+    public static async getHighestBidObject(): Promise<{
         bid: number;
         bidderId: string;
         bidderName: string;
     }> {
-        if (!this.AuctionState.highestBidderId) {
-            return undefined;
-        }
-
         const captainName = this.Captains[this.AuctionState.highestBidderId].name;
 
         return {

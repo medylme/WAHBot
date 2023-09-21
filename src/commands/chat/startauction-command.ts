@@ -302,7 +302,7 @@ ${eventsList.map(event => event).join('\n')}
                 : `There are **${playersLeft}** players left in this tier (make sure you get at least one per tier)`
         }!`;
 
-        const highestBidObject = await StateUtils.getHighestBid();
+        const highestBidObject = await StateUtils.getHighestBidObject();
         if (highestBidObject == undefined) {
             const noBidsEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
