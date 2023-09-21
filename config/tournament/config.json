@@ -1,7 +1,7 @@
 {
     "auctionDuration": 15,
     "resetDuration": 10,
-    "minBid": 100,
+    "minBid": 50,
     "maxBid": 13500,
     "minBidIncrement": 50,
     "maxBidIncrement": 2000,
