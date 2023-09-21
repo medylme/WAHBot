@@ -26,7 +26,7 @@ export class OsuApiUtils {
 
             return true;
         } catch (err) {
-            Logger.error('Failed to ping osu! API', err);
+            Logger.error(err);
             return false;
         }
     }
@@ -49,6 +49,7 @@ export class OsuApiUtils {
 
             return data[0].user_id as number;
         } catch (err) {
+            Logger.error(err);
             throw new Error('Something went wrong while fetching from the osu! endpoint!');
         }
     }
@@ -71,6 +72,7 @@ export class OsuApiUtils {
 
             return data[0].username as string;
         } catch (err) {
+            Logger.error(err);
             throw new Error('Something went wrong while fetching from the osu! endpoint!');
         }
     }
