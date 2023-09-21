@@ -31,7 +31,7 @@ export class BidCommand implements Command {
         const isCaptain = await StateUtils.isCaptainFromDisc(intr.user.id);
         if (!isCaptain) {
             const notCaptainEmbed = new EmbedBuilder()
-                .setTitle('Not captain')
+                .setTitle('Not a captain')
                 .setDescription(`Only captains can bid on players.`)
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, notCaptainEmbed);
@@ -41,7 +41,7 @@ export class BidCommand implements Command {
         // Check if an auction is currently running
         if (state.status === 'idle') {
             const notOngoingEmbed = new EmbedBuilder()
-                .setTitle('No ongoing auction (yet)')
+                .setTitle('No ongoing auction')
                 .setDescription(`There is currently no auction running.`)
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, notOngoingEmbed);
@@ -52,7 +52,7 @@ export class BidCommand implements Command {
         if (!state.biddingActive) {
             const biddingNotActiveEmbed = new EmbedBuilder()
                 .setTitle('Bidding not active')
-                .setDescription(`Bidding is currently not active.`)
+                .setDescription(`No player is currently being sold.`)
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, biddingNotActiveEmbed);
             return;
@@ -63,9 +63,9 @@ export class BidCommand implements Command {
         const currentTeam = await StateUtils.GetTeamMembers(intr.user.id);
         if (currentTeam.length >= maxTeamSize) {
             const teamFullEmbed = new EmbedBuilder()
-                .setTitle('Team already full!')
+                .setTitle('Team already full')
                 .setDescription(
-                    `Your team is already full (${maxTeamSize} players)! You cannot bid on any more players.`
+                    `Your team is already full (${maxTeamSize} players)! You cannot get any more players through the auction.`
                 )
                 .setColor(RandomUtils.getDangerColor());
             await InteractionUtils.send(intr, teamFullEmbed);
@@ -89,8 +89,10 @@ export class BidCommand implements Command {
         // Check if bid is higher than min bid
         if (bidAmount < AuctionConfig.minBid) {
             const minBidNotReachedEmbed = new EmbedBuilder()
-                .setTitle('Min bid not reached')
-                .setDescription(`You cannot place a bid lower than **${AuctionConfig.minBid}**.`)
+                .setTitle('Mininum bid not reached')
+                .setDescription(
+                    `You cannot place **any** bid lower than **${AuctionConfig.minBid}**.`
+                )
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, minBidNotReachedEmbed);
             return;
@@ -99,8 +101,8 @@ export class BidCommand implements Command {
         // Check if bid is lower than max bid
         if (bidAmount > AuctionConfig.maxBid) {
             const maxBidExceededEmbed = new EmbedBuilder()
-                .setTitle('Max bid exceeded')
-                .setDescription(`You cannot place a bid higher than **${AuctionConfig.maxBid}**.`)
+                .setTitle('Maximum bid exceeded')
+                .setDescription(`Bids are hard-capped at **${AuctionConfig.maxBid}**.`)
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, maxBidExceededEmbed);
             return;
@@ -122,9 +124,9 @@ export class BidCommand implements Command {
             const maxThreshold = currentHighestBid + maxIncrement;
             if (bidAmount > maxThreshold) {
                 const maxBidExceededEmbed = new EmbedBuilder()
-                    .setTitle('Max bid exceeded')
+                    .setTitle('Bid too high')
                     .setDescription(
-                        `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}** (You need to bid **${maxThreshold}** or lower).`
+                        `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}** (You need to bid **${upperThreshold}** or lower).`
                     )
                     .setColor(RandomUtils.getSecondaryColor());
                 await InteractionUtils.send(intr, maxBidExceededEmbed);
