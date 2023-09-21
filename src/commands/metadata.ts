@@ -58,8 +58,8 @@ export const ChatCommandMetadata: {
         default_member_permissions: undefined,
         options: [
             {
-                name: 'id',
-                description: 'Check using an osu! id.',
+                name: 'osu-id',
+                description: 'Check by osu! user id.',
                 type: ApplicationCommandOptionType.Subcommand,
                 options: [
                     {
@@ -71,8 +71,8 @@ export const ChatCommandMetadata: {
                 ],
             },
             {
-                name: 'username',
-                description: 'Check a using an osu! username.',
+                name: 'osu-username',
+                description: 'Check by osu! username.',
                 type: ApplicationCommandOptionType.Subcommand,
                 options: [
                     {

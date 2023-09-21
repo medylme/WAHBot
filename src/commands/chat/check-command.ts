@@ -16,7 +16,7 @@ export class CheckCommand implements Command {
         const subcommandValue = intr.options.getSubcommand();
 
         switch (subcommandValue) {
-            case 'id': {
+            case 'osu-id': {
                 const query = intr.options.getInteger('value');
                 const baseLog = `@${intr.user.username} (${intr.user.id}) checked id '${query}'`;
 
@@ -75,7 +75,7 @@ export class CheckCommand implements Command {
                 Logger.info(`${baseLog} | Username '${osuUsername}' > Not registered.`);
                 return;
             }
-            case 'username': {
+            case 'osu-username': {
                 const query = intr.options.getString('value');
                 const baseLog = `@${intr.user.username} (${intr.user.id}) checked Username '${query}'`;
 
