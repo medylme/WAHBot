@@ -225,7 +225,7 @@ ${eventsList.map(event => event).join('\n')}
         await thread.send({ embeds: [nextUpEmbed] });
 
         // Wait a bit
-        await delay(1000);
+        await delay(2000);
 
         await StateUtils.writeAuctionStateValues({
             biddingActive: true,
