@@ -7,12 +7,17 @@ import {
 import { RateLimiter } from 'discord.js-rate-limiter';
 import fetch from 'node-fetch';
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
 import util from 'node:util';
 
 import { EventData } from '../../models/internal-models.js';
 import { Logger } from '../../services/logger.js';
-import { InteractionUtils, OpenAIUtils, RandomUtils, StateUtils } from '../../utils/index.js';
+import {
+    InteractionUtils,
+    OpenAIUtils,
+    RandomUtils,
+    StateUtils,
+    TournamentConfigUtils,
+} from '../../utils/index.js';
 import { PlayersList, ResumeData, TeamMembers } from '../../utils/state-utils.js';
 import { Command, CommandDeferType } from '../index.js';
 
@@ -30,9 +35,8 @@ async function writeToFile(
     }
 }
 
-const require = createRequire(import.meta.url);
-let ApiKeyConfig = require('../../../config/tournament/apiKeys.json');
-let AuctionConfig = require('../../../config/tournament/config.json');
+const ApiKeyConfig = await TournamentConfigUtils.getApiKeysConfig();
+const AuctionConfig = await TournamentConfigUtils.getAuctionConfig();
 
 function delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));

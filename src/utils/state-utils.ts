@@ -1,12 +1,9 @@
-import { createRequire } from 'node:module';
-
-import { OsuApiUtils } from './index.js';
+import { OsuApiUtils, TournamentConfigUtils } from './index.js';
 import { Logger } from '../services/logger.js';
 
-const require = createRequire(import.meta.url);
-const CaptainConfig = require('../../config/tournament/captains.json');
-const AuctionConfig = require('../../config/tournament/config.json');
-const PlayerConfig = require('../../config/tournament/players.json');
+const CaptainConfig = await TournamentConfigUtils.getAuctionCaptainConfig();
+const AuctionConfig = await TournamentConfigUtils.getAuctionConfig();
+const PlayerConfig = await TournamentConfigUtils.getAuctionPlayerConfig();
 
 export interface AuctionState {
     status: string;
@@ -134,7 +131,7 @@ export class StateUtils {
     private static async getCaptainsFromConfig(): Promise<void> {
         Object.keys(CaptainConfig).forEach(captainId => {
             this.Captains[captainId] = {
-                name: this.CaptainUsernameMap[CaptainConfig[captainId]],
+                name: this.CaptainUsernameMap[CaptainConfig[captainId].osuId],
                 teamname: CaptainConfig[captainId].teamname,
                 balance: AuctionConfig.startingBalance,
                 osuId: CaptainConfig[captainId].osuId,
@@ -339,6 +336,16 @@ export class StateUtils {
         return freeAgentsArray;
     }
 
+    private static ClampToTiers(number: number): 1 | 2 | 3 | 4 {
+        if (number > 4) {
+            return 4;
+        } else if (number < 1) {
+            return 1;
+        } else {
+            return number as 1 | 2 | 3 | 4;
+        }
+    }
+
     public static async SellPlayer(): Promise<void> {
         let captainId = this.AuctionState.highestBidderId;
         let playerId = this.AuctionState.currentPlayer;
@@ -368,8 +375,9 @@ export class StateUtils {
             playerCost > this.AuctionStats.mostValuablePlayerValue
         ) {
             this.AuctionStats.mostValuablePlayer = this.AuctionState.currentPlayerName;
-            this.AuctionStats.mostValuablePlayerTier =
-                AuctionConfig.tierOrder[this.AuctionState.currentTierIndex];
+            this.AuctionStats.mostValuablePlayerTier = this.ClampToTiers(
+                AuctionConfig.tierOrder[this.AuctionState.currentTierIndex]
+            );
             this.AuctionStats.mostValuablePlayerValue = playerCost;
             this.AuctionStats.mostValuablePlayerTeam = this.Captains[captainId].teamname;
         }

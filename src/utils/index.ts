@@ -11,7 +11,7 @@ export { RegexUtils } from './regex-utils.js';
 export { ShardUtils } from './shard-utils.js';
 export { StringUtils } from './string-utils.js';
 export { ThreadUtils } from './thread-utils.js';
-export { CheckUtils } from './check-utils.js';
+export { TournamentConfigUtils } from './tournamentconfig-utils.js';
 export { StateUtils } from './state-utils.js';
 export { OpenAIUtils } from './openai-utils.js';
 export { OsuApiUtils } from './osuapi-utils.js';

@@ -1,14 +1,13 @@
-import { createRequire } from 'node:module';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { Configuration, OpenAIApi } from 'openai';
 
+import { TournamentConfigUtils } from './tournamentconfig-utils.js';
 import { Logger } from '../services/logger.js';
 
-const require = createRequire(import.meta.url);
+const ApiKeyConfig = await TournamentConfigUtils.getApiKeysConfig();
 
 export class OpenAIUtils {
-    private static readonly apiKeyConfig = require('../../config/tournament/apiKeys.json');
-    private static readonly API_KEY = this.apiKeyConfig.openaiApiKey;
+    private static readonly API_KEY = ApiKeyConfig.openaiApiKey;
     private static readonly configuration = new Configuration({
         apiKey: this.API_KEY,
     });

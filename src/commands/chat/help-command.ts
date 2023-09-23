@@ -1,15 +1,13 @@
 import { ChatInputCommandInteraction, EmbedBuilder, PermissionsString } from 'discord.js';
-import { createRequire } from 'node:module';
 
 import { HelpOption } from '../../enums/index.js';
 import { Language } from '../../models/enum-helpers/index.js';
 import { EventData } from '../../models/internal-models.js';
 import { Lang } from '../../services/index.js';
-import { InteractionUtils, RandomUtils } from '../../utils/index.js';
+import { InteractionUtils, RandomUtils, TournamentConfigUtils } from '../../utils/index.js';
 import { Command, CommandDeferType } from '../index.js';
 
-const require = createRequire(import.meta.url);
-let auctionConfig = require('../../../config/tournament/config.json');
+const AuctionConfig = await TournamentConfigUtils.getAuctionConfig();
 
 export class HelpCommand implements Command {
     public names = [Lang.getRef('chatCommands.help', Language.Default)];
@@ -25,11 +23,11 @@ export class HelpCommand implements Command {
         let embed: EmbedBuilder;
         switch (args.option) {
             case HelpOption.AUCTION: {
-                let auctionDuration = auctionConfig.auctionDuration;
-                let _minBid = auctionConfig.minBid;
-                let _maxBid = auctionConfig.maxBid;
-                let _shufflePlayers = auctionConfig.shufflePlayers;
-                let _startingBalance = auctionConfig.startingBalance;
+                let auctionDuration = AuctionConfig.auctionDuration;
+                let _minBid = AuctionConfig.minBid;
+                let _maxBid = AuctionConfig.maxBid;
+                let _shufflePlayers = AuctionConfig.shufflePlayers;
+                let _startingBalance = AuctionConfig.startingBalance;
 
                 embed = new EmbedBuilder()
                     .setColor(RandomUtils.getPrimaryColor())

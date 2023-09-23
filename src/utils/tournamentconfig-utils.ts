@@ -1,15 +1,52 @@
 import { createRequire } from 'node:module';
 
 import { OpenAIUtils, OsuApiUtils } from './index.js';
+import {
+    ApiKeyConfigProps,
+    AuctionCaptainConfigProps,
+    AuctionConfigProps,
+    AuctionPlayerConfigProps,
+} from '../models/tournamentconfig-models.js';
 import { Logger } from '../services/index.js';
 
 const require = createRequire(import.meta.url);
-let ApiKeyConfig = require('../../config/tournament/apiKeys.json');
-let AuctionCaptainConfig = require('../../config/tournament/captains.json');
-let AuctionConfig = require('../../config/tournament/config.json');
-let AuctionPlayerConfig = require('../../config/tournament/players.json');
 
-export class CheckUtils {
+export class TournamentConfigUtils {
+    private static ApiKeyConfig: ApiKeyConfigProps;
+    private static AuctionCaptainConfig: AuctionCaptainConfigProps;
+    private static AuctionConfig: AuctionConfigProps;
+    private static AuctionPlayerConfig: AuctionPlayerConfigProps;
+
+    public static async getApiKeysConfig(): Promise<ApiKeyConfigProps> {
+        return this.ApiKeyConfig;
+    }
+
+    public static async getAuctionCaptainConfig(): Promise<AuctionCaptainConfigProps> {
+        return this.AuctionCaptainConfig;
+    }
+
+    public static async getAuctionConfig(): Promise<AuctionConfigProps> {
+        return this.AuctionConfig;
+    }
+
+    public static async getAuctionPlayerConfig(): Promise<AuctionPlayerConfigProps> {
+        return this.AuctionPlayerConfig;
+    }
+
+    public static async setConfigs(): Promise<void> {
+        try {
+            this.ApiKeyConfig = require('../../config/tournament/apiKeys.json');
+            this.AuctionCaptainConfig = require('../../config/tournament/captains.json');
+            this.AuctionConfig = require('../../config/tournament/config.json');
+            this.AuctionPlayerConfig = require('../../config/tournament/players.json');
+        } catch (e) {
+            Logger.error(
+                'Failed to load one (or more) config file! Did you set all config files up correctly?'
+            );
+            process.exit(1);
+        }
+    }
+
     public static async checkTournamentConfigs(): Promise<void> {
         Logger.debug('Performing config validation checks...');
 
@@ -24,8 +61,8 @@ export class CheckUtils {
     }
 
     private static async checkApiKeys(): Promise<void> {
-        const osuApiKey = ApiKeyConfig.osuApiKey;
-        const openaiApiKey = ApiKeyConfig.openaiApiKey;
+        const osuApiKey = this.ApiKeyConfig.osuApiKey;
+        const openaiApiKey = this.ApiKeyConfig.openaiApiKey;
 
         if (!osuApiKey) {
             throw new Error('osu! API key (v1) is missing!');
@@ -50,137 +87,146 @@ export class CheckUtils {
 
     private static checkConfig(): void {
         if (
-            !AuctionConfig.auctionDuration ||
-            !AuctionConfig.resetDuration ||
-            !AuctionConfig.maxBid ||
-            !AuctionConfig.minBid ||
-            !AuctionConfig.minBidIncrement ||
-            !AuctionConfig.maxBidIncrement ||
-            !AuctionConfig.maxTeamSize ||
-            !AuctionConfig.startingBalance ||
-            !AuctionConfig.shufflePlayers ||
-            !AuctionConfig.tierOrder ||
-            !AuctionConfig.threadPrefix
+            !this.AuctionConfig.auctionDuration ||
+            !this.AuctionConfig.resetDuration ||
+            !this.AuctionConfig.maxBid ||
+            !this.AuctionConfig.minBid ||
+            !this.AuctionConfig.minBidIncrement ||
+            !this.AuctionConfig.maxBidIncrement ||
+            !this.AuctionConfig.maxTeamSize ||
+            !this.AuctionConfig.startingBalance ||
+            !this.AuctionConfig.shufflePlayers ||
+            !this.AuctionConfig.tierOrder ||
+            !this.AuctionConfig.threadPrefix
         ) {
             throw new Error('Tournament config is missing required fields!');
         }
 
         // Type Checks
 
-        if (typeof AuctionConfig.shufflePlayers !== 'boolean') {
+        if (typeof this.AuctionConfig.shufflePlayers !== 'boolean') {
             throw new Error(`Shuffle players must be true or false!`);
         }
 
-        if (typeof AuctionConfig.auctionDuration !== 'number') {
+        if (typeof this.AuctionConfig.auctionDuration !== 'number') {
             throw new Error(`Auction duration must be a number!`);
         }
 
-        if (typeof AuctionConfig.resetDuration !== 'number') {
+        if (typeof this.AuctionConfig.resetDuration !== 'number') {
             throw new Error(`Reset duration must be a number!`);
         }
 
-        if (typeof AuctionConfig.minBid !== 'number') {
+        if (typeof this.AuctionConfig.minBid !== 'number') {
             throw new Error(`Min bid must be a number!`);
         }
 
-        if (typeof AuctionConfig.maxBid !== 'number') {
+        if (typeof this.AuctionConfig.maxBid !== 'number') {
             throw new Error(`Max bid must be a number!`);
         }
 
-        if (typeof AuctionConfig.minBidIncrement !== 'number') {
+        if (typeof this.AuctionConfig.minBidIncrement !== 'number') {
             throw new Error(`Min bid increment must be a number!`);
         }
 
-        if (typeof AuctionConfig.maxBidIncrement !== 'number') {
+        if (typeof this.AuctionConfig.maxBidIncrement !== 'number') {
             throw new Error(`Max bid increment must be a number!`);
         }
 
-        if (typeof AuctionConfig.startingBalance !== 'number') {
+        if (typeof this.AuctionConfig.startingBalance !== 'number') {
             throw new Error(`Starting balance must be a number!`);
         }
 
-        if (typeof AuctionConfig.maxTeamSize !== 'number') {
+        if (typeof this.AuctionConfig.maxTeamSize !== 'number') {
             throw new Error(`Max team size must be a number!`);
         }
 
-        if (typeof AuctionConfig.shufflePlayers !== 'boolean') {
+        if (typeof this.AuctionConfig.shufflePlayers !== 'boolean') {
             throw new Error(`Shuffle players must be a boolean!`);
         }
 
-        if (typeof AuctionConfig.AIReport !== 'boolean') {
+        if (typeof this.AuctionConfig.AIReport !== 'boolean') {
             throw new Error(`AI report must be a boolean!`);
         }
 
-        if (typeof AuctionConfig.threadPrefix !== 'string') {
+        if (typeof this.AuctionConfig.threadPrefix !== 'string') {
             throw new Error(`Thread prefix must be a string!`);
         }
 
         // Content Checks
 
-        if (AuctionConfig.auctionDuration < 1 || AuctionConfig.auctionDuration > 1440) {
+        if (this.AuctionConfig.auctionDuration < 1 || this.AuctionConfig.auctionDuration > 1440) {
             throw new Error(
                 `Auction duration must be greater than 0! Please use a value between 1 and 1440.`
             );
         }
 
-        if (AuctionConfig.resetDuration < 1 || AuctionConfig.resetDuration > 1440) {
+        if (this.AuctionConfig.resetDuration < 1 || this.AuctionConfig.resetDuration > 1440) {
             throw new Error(
                 `Auction duration must be greater than 0! Please use a value between 1 and 1440.`
             );
         }
 
-        if (AuctionConfig.resetDuration > AuctionConfig.auctionDuration) {
+        if (this.AuctionConfig.resetDuration > this.AuctionConfig.auctionDuration) {
             throw new Error(`Reset duration must be less than auction duration!`);
         }
 
-        if (AuctionConfig.minBid < 1 || AuctionConfig.minBid > 1000000) {
+        if (this.AuctionConfig.minBid < 1 || this.AuctionConfig.minBid > 1000000) {
             throw new Error(
                 `Starting bid must be greater than 0! Please use a value between 1 and 1000000.`
             );
         }
 
-        if (AuctionConfig.maxBid < 1 || AuctionConfig.maxBid > 1000000) {
+        if (this.AuctionConfig.maxBid < 1 || this.AuctionConfig.maxBid > 1000000) {
             throw new Error(
                 `Starting bid must be greater than 0! Please use a value between 1 and 1000000.`
             );
         }
 
-        if (AuctionConfig.minBid > AuctionConfig.maxBid) {
+        if (this.AuctionConfig.minBid > this.AuctionConfig.maxBid) {
             throw new Error(`Starting bid must be less than max bid!`);
         }
 
-        if (AuctionConfig.minBidIncrement < 1 || AuctionConfig.minBidIncrement > 1000000) {
+        if (
+            this.AuctionConfig.minBidIncrement < 1 ||
+            this.AuctionConfig.minBidIncrement > 1000000
+        ) {
             throw new Error(
                 `Min bid increment must be greater than 0! Please use a value between 1 and 1000000.`
             );
         }
 
-        if (AuctionConfig.maxBidIncrement < 1 || AuctionConfig.maxBidIncrement > 1000000) {
+        if (
+            this.AuctionConfig.maxBidIncrement < 1 ||
+            this.AuctionConfig.maxBidIncrement > 1000000
+        ) {
             throw new Error(
                 `Max bid increment must be greater than 0! Please use a value between 1 and 1000000.`
             );
         }
 
-        if (AuctionConfig.minBidIncrement > AuctionConfig.maxBidIncrement) {
+        if (this.AuctionConfig.minBidIncrement > this.AuctionConfig.maxBidIncrement) {
             throw new Error(`Min bid increment must be less than max bid increment!`);
         }
 
-        if (AuctionConfig.startingBalance < 1 || AuctionConfig.startingBalance > 1000000) {
+        if (
+            this.AuctionConfig.startingBalance < 1 ||
+            this.AuctionConfig.startingBalance > 1000000
+        ) {
             throw new Error(
                 `Starting balance must be greater than 0! Please use a value between 1 and 1000000.`
             );
         }
 
         if (
-            AuctionConfig.tierOrder.length !== 4 ||
-            AuctionConfig.tierOrder.some((tier: number) => ![1, 2, 3, 4].includes(tier))
+            this.AuctionConfig.tierOrder.length !== 4 ||
+            this.AuctionConfig.tierOrder.some((tier: number) => ![1, 2, 3, 4].includes(tier))
         ) {
             throw new Error(
                 `Tier order is incorrect. Please provide a valid array of tiers 1 to 4.`
             );
         }
 
-        if (AuctionConfig.maxTeamSize < 1 || AuctionConfig.maxTeamSize > 100) {
+        if (this.AuctionConfig.maxTeamSize < 1 || this.AuctionConfig.maxTeamSize > 100) {
             throw new Error(
                 `Max team size must be greater than 0! Please use a value between 1 and 100.`
             );
@@ -188,7 +234,7 @@ export class CheckUtils {
     }
 
     private static checkPlayerConfig(): void {
-        const obj = AuctionPlayerConfig;
+        const obj = this.AuctionPlayerConfig;
 
         const expectedTiers = ['1', '2', '3', '4'];
 
@@ -210,7 +256,7 @@ export class CheckUtils {
     }
 
     private static checkCaptainConfig(): void {
-        const obj = AuctionCaptainConfig;
+        const obj = this.AuctionCaptainConfig;
 
         if (typeof obj !== 'object' || obj === null) {
             throw new Error('Captain config is missing required fields!');

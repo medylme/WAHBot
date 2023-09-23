@@ -4,19 +4,24 @@ import {
     PermissionsString,
     TextChannel,
 } from 'discord.js';
-import { createRequire } from 'node:module';
 
 import { EventData } from '../../models/internal-models.js';
-import { ClientUtils, InteractionUtils, RandomUtils, StateUtils } from '../../utils/index.js';
+import {
+    ClientUtils,
+    InteractionUtils,
+    RandomUtils,
+    StateUtils,
+    TournamentConfigUtils,
+} from '../../utils/index.js';
 import { Command, CommandDeferType } from '../index.js';
 
-const _require = createRequire(import.meta.url);
-const AuctionConfig = _require('../../../config/tournament/config.json');
+const AuctionConfig = await TournamentConfigUtils.getAuctionConfig();
 
 export class BidCommand implements Command {
     public names = ['bid'];
     public deferType = CommandDeferType.HIDDEN;
     public requireClientPerms: PermissionsString[] = ['ViewChannel'];
+
     public async execute(intr: ChatInputCommandInteraction, _data: EventData): Promise<void> {
         const bidAmount = intr.options.getInteger('amount');
 
@@ -111,12 +116,12 @@ export class BidCommand implements Command {
         // Check if bid is valid:
         // - Higher than current bid + min increment
         // - Lower than max increment
-        const minBid = AuctionConfig.minBid as number;
+        const minBid = AuctionConfig.minBid;
         const currentHighestBid = await StateUtils.getHighestBid();
 
         if (currentHighestBid > minBid) {
-            const minIncrement = AuctionConfig.minBidIncrement as number;
-            const maxIncrement = AuctionConfig.maxBidIncrement as number;
+            const minIncrement = AuctionConfig.minBidIncrement;
+            const maxIncrement = AuctionConfig.maxBidIncrement;
 
             // - Upper bound threshold
             const upperBound = currentHighestBid + maxIncrement;
@@ -162,7 +167,7 @@ export class BidCommand implements Command {
 
         // Reset bid timer
         const timeRemaining = await StateUtils.getTimeRemaining();
-        const resetDuration = AuctionConfig.resetDuration as number;
+        const resetDuration = AuctionConfig.resetDuration;
 
         if (timeRemaining < resetDuration) {
             StateUtils.writeAuctionStateValues({

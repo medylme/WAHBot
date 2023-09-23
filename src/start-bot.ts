@@ -44,7 +44,7 @@ import {
     Logger,
 } from './services/index.js';
 import { Trigger } from './triggers/index.js';
-import { CheckUtils, StateUtils } from './utils/index.js';
+import { StateUtils, TournamentConfigUtils } from './utils/index.js';
 
 const require = createRequire(import.meta.url);
 let Config = require('../config/config.json');
@@ -153,9 +153,10 @@ async function start(): Promise<void> {
 
     await bot.start();
 
-    // Checks
+    // Tournament Configs
     try {
-        await CheckUtils.checkTournamentConfigs();
+        await TournamentConfigUtils.setConfigs();
+        await TournamentConfigUtils.checkTournamentConfigs();
     } catch (e) {
         Logger.error(e.message);
         process.exit();

@@ -10,15 +10,13 @@ import {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { CollectorUtils } from 'discord.js-collector-utils';
 import { RateLimiter } from 'discord.js-rate-limiter';
-import { createRequire } from 'node:module';
 
 import { EventData } from '../../models/internal-models.js';
 import { Logger } from '../../services/logger.js';
-import { RandomUtils } from '../../utils/index.js';
+import { RandomUtils, TournamentConfigUtils } from '../../utils/index.js';
 import { Command, CommandDeferType } from '../index.js';
 
-const require = createRequire(import.meta.url);
-let AuctionConfig = require('../../../config/tournament/config.json');
+const AuctionConfig = await TournamentConfigUtils.getAuctionConfig();
 
 export class ClearThreadsCommand implements Command {
     public names = ['clearthreads'];

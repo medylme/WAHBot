@@ -4,14 +4,13 @@ import {
     RESTPostAPIChatInputApplicationCommandsJSONBody,
     RESTPostAPIContextMenuApplicationCommandsJSONBody,
 } from 'discord.js';
-import { createRequire } from 'node:module';
 
 import { Args } from './index.js';
 import { Language } from '../models/enum-helpers/index.js';
 import { Lang } from '../services/index.js';
+import { TournamentConfigUtils } from '../utils/tournamentconfig-utils.js';
 
-const require = createRequire(import.meta.url);
-let auctionConfig = require('../../config/tournament/config.json');
+const AuctionConfig = await TournamentConfigUtils.getAuctionConfig();
 
 export const ChatCommandMetadata: {
     [command: string]: RESTPostAPIChatInputApplicationCommandsJSONBody;
@@ -134,8 +133,8 @@ export const ChatCommandMetadata: {
                 name: 'amount',
                 description: 'The amount to bid.',
                 type: ApplicationCommandOptionType.Integer,
-                min_value: auctionConfig.minBid,
-                max_value: auctionConfig.maxBid,
+                min_value: AuctionConfig.minBid,
+                max_value: AuctionConfig.maxBid,
                 required: true,
             },
         ],

@@ -1,9 +1,7 @@
-import { createRequire } from 'node:module';
-
+import { TournamentConfigUtils } from './tournamentconfig-utils.js';
 import { Logger } from '../services/index.js';
 
-const require = createRequire(import.meta.url);
-const ApiKeysConfig = require('../../config/tournament/apiKeys.json');
+const ApiKeysConfig = await TournamentConfigUtils.getApiKeysConfig();
 
 export class OsuApiUtils {
     private static apiKey: string = ApiKeysConfig.osuApiKey;
