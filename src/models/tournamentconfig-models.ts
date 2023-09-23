@@ -11,20 +11,20 @@ export interface AuctionCaptainConfigProps {
 }
 
 export interface AuctionConfigProps {
-    auctionDuration: number;
-    resetDuration: number;
-    minBid: number;
-    maxBid: number;
-    minBidIncrement: number;
-    maxBidIncrement: number;
-    maxTeamSize: number;
-    AIReport: boolean;
-    startingBalance: number;
-    shufflePlayers: boolean;
-    tierOrder: number[];
-    threadPrefix: string;
+    readonly auctionDuration: number;
+    readonly resetDuration: number;
+    readonly minBid: number;
+    readonly maxBid: number;
+    readonly minBidIncrement: number;
+    readonly maxBidIncrement: number;
+    readonly maxTeamSize: number;
+    readonly AIReport: boolean;
+    readonly startingBalance: number;
+    readonly shufflePlayers: boolean;
+    readonly tierOrder: number[];
+    readonly threadPrefix: string;
 }
 
 export interface AuctionPlayerConfigProps {
-    [key: string]: number[];
+    readonly [key: string]: readonly number[];
 }
