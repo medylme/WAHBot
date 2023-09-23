@@ -74,12 +74,17 @@ export class OsuApiUtils {
                 return null;
             }
 
+            const username = data[0].username.toString();
+
+            if (username === undefined) {
+                throw new Error('Something went wrong while fetching from the osu! endpoint!');
+            }
+
             // Logger.debug('osu! api | get_user from id:', data);
 
-            return data[0].username as string;
+            return username;
         } catch (err) {
             Logger.error(err);
-            throw new Error('Something went wrong while fetching from the osu! endpoint!');
         }
     }
 }

@@ -102,16 +102,39 @@ export class StateUtils {
     private static AuctionStats: AuctionStats = this.AuctionStatsDefaults;
     private static FreeAgents: TeamMembers[] = [];
     private static Captains: Captains = {};
+    private static CaptainUsernameMapPopulated = false;
+    private static CaptainUsernameMap: { [key: number]: string } = {};
 
-    public static async resetAuctionStateValues(): Promise<void> {
-        this.AuctionState = { ...this.AuctionStateDefaults };
-        this.AuctionStats = { ...this.AuctionStatsDefaults };
-        this.FreeAgents = [];
-        this.Captains = {};
+    private static async populateCaptainUsernameMap(): Promise<void> {
+        if (this.CaptainUsernameMapPopulated) {
+            return;
+        }
 
+        Logger.debug('Captain username map empty. Fetching from osu! API...');
+
+        try {
+            Object.keys(CaptainConfig).forEach(async captainId => {
+                const osuId = CaptainConfig[captainId].osuId;
+                const username = await OsuApiUtils.getOsuUsername(osuId);
+
+                if (username === null) {
+                    throw new Error(
+                        `Failed to get username for osu! id ${osuId}. Did you enter it correctly?`
+                    );
+                }
+
+                this.CaptainUsernameMap[osuId] = username;
+                Logger.debug(`Captain ID '${osuId}' mapped to username '${username}'.`);
+            });
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+
+    private static async getCaptainsFromConfig(): Promise<void> {
         Object.keys(CaptainConfig).forEach(captainId => {
             this.Captains[captainId] = {
-                name: CaptainConfig[captainId].name,
+                name: this.CaptainUsernameMap[CaptainConfig[captainId]],
                 teamname: CaptainConfig[captainId].teamname,
                 balance: AuctionConfig.startingBalance,
                 osuId: CaptainConfig[captainId].osuId,
@@ -119,8 +142,26 @@ export class StateUtils {
                 teamvalue: 0,
             };
         });
+    }
 
-        Logger.debug('Auction states reset!');
+    public static async resetAuctionStateValues(): Promise<void> {
+        this.AuctionState = { ...this.AuctionStateDefaults };
+        this.AuctionStats = { ...this.AuctionStatsDefaults };
+        this.FreeAgents = [];
+        this.Captains = {};
+
+        await this.populateCaptainUsernameMap();
+
+        try {
+            await this.getCaptainsFromConfig();
+        } catch (e) {
+            Logger.error(e);
+            throw new Error(
+                'Failed to get captain username from map. Was the config changed without restarting?'
+            );
+        }
+
+        Logger.info('Auction states reset!');
     }
 
     // State stuff
