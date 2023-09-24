@@ -84,6 +84,43 @@ export class BidCommand implements Command {
             return;
         }
 
+        // Check if bid is higher than min cap
+        if (bidAmount < AuctionConfig.minBid) {
+            const minBidNotReachedEmbed = new EmbedBuilder()
+                .setTitle('Mininum bid not reached')
+                .setDescription(
+                    `You cannot place **any** bid lower than **${AuctionConfig.minBid}**.`
+                )
+                .setColor(RandomUtils.getSecondaryColor());
+            await InteractionUtils.send(intr, minBidNotReachedEmbed);
+            return;
+        }
+
+        // Check if bid is lower than max cap
+        if (bidAmount > AuctionConfig.maxBid) {
+            const maxBidExceededEmbed = new EmbedBuilder()
+                .setTitle('Maximum bid exceeded')
+                .setDescription(`Bids are hard-capped at **${AuctionConfig.maxBid}**.`)
+                .setColor(RandomUtils.getSecondaryColor());
+            await InteractionUtils.send(intr, maxBidExceededEmbed);
+            return;
+        }
+
+        // Check if captain is not already the highest bidder
+        const currentHighestBidObject = await StateUtils.getHighestBidObject();
+        if (currentHighestBidObject !== undefined) {
+            if (currentHighestBidObject.bidderId === captainDiscId) {
+                const alreadyHighestBidderEmbed = new EmbedBuilder()
+                    .setTitle('Already highest bidder')
+                    .setDescription(
+                        `You are already the highest bidder with a bid of **${currentHighestBidObject.bid}**.`
+                    )
+                    .setColor(RandomUtils.getSecondaryColor());
+                await InteractionUtils.send(intr, alreadyHighestBidderEmbed);
+                return;
+            }
+        }
+
         // Check if captain has balance to bid
         const captainState = await StateUtils.getCaptainStateFromDisc(captainDiscId);
         const captainBalance = captainState.balance;
@@ -98,33 +135,11 @@ export class BidCommand implements Command {
             return;
         }
 
-        // Check if bid is higher than min bid
-        if (bidAmount < AuctionConfig.minBid) {
-            const minBidNotReachedEmbed = new EmbedBuilder()
-                .setTitle('Mininum bid not reached')
-                .setDescription(
-                    `You cannot place **any** bid lower than **${AuctionConfig.minBid}**.`
-                )
-                .setColor(RandomUtils.getSecondaryColor());
-            await InteractionUtils.send(intr, minBidNotReachedEmbed);
-            return;
-        }
-
-        // Check if bid is lower than max bid
-        if (bidAmount > AuctionConfig.maxBid) {
-            const maxBidExceededEmbed = new EmbedBuilder()
-                .setTitle('Maximum bid exceeded')
-                .setDescription(`Bids are hard-capped at **${AuctionConfig.maxBid}**.`)
-                .setColor(RandomUtils.getSecondaryColor());
-            await InteractionUtils.send(intr, maxBidExceededEmbed);
-            return;
-        }
-
-        // Check if bid is valid:
+        // Check if bid is in range:
         // - Higher than current bid + min increment
         // - Lower than max increment
-        const minBid = AuctionConfig.minBid;
         const currentHighestBid = await StateUtils.getHighestBid();
+        const minBid = AuctionConfig.minBid;
 
         // - Lower bound threshold (only applies after initial bid)
         if (currentHighestBid > minBid) {
