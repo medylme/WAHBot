@@ -1,12 +1,5 @@
-import {
-    ButtonStyle,
-    ChatInputCommandInteraction,
-    ComponentType,
-    EmbedBuilder,
-    PermissionsString,
-} from 'discord.js';
+import { ChatInputCommandInteraction, EmbedBuilder, PermissionsString } from 'discord.js';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { CollectorUtils } from 'discord.js-collector-utils';
 import { RateLimiter } from 'discord.js-rate-limiter';
 
 import { EventData } from '../../models/internal-models.js';
@@ -62,78 +55,17 @@ export class PauseAuctionCommand implements Command {
             await InteractionUtils.send(intr, biddingNotActiveEmbed);
         }
 
-        const confirmEmbed = new EmbedBuilder()
-            .setColor(RandomUtils.getSecondaryColor())
-            .setTitle('Confirm')
-            .setDescription('Are you sure you want to pause the auction?');
+        Logger.info(`Auction queued to pause by ${intr.user.username} (${intr.user.id})`);
 
-        let prompt = await intr.editReply({
-            embeds: [confirmEmbed],
-            components: [
-                {
-                    type: ComponentType.ActionRow,
-                    components: [
-                        {
-                            type: ComponentType.Button,
-                            customId: 'confirm',
-                            label: 'Confirm',
-                            style: ButtonStyle.Primary,
-                        },
-                        {
-                            type: ComponentType.Button,
-                            customId: 'cancel',
-                            label: 'Cancel',
-                            style: ButtonStyle.Secondary,
-                        },
-                    ],
-                },
-            ],
+        StateUtils.writeAuctionStateValues({
+            status: 'pausing',
         });
 
-        let result = await CollectorUtils.collectByButton(
-            prompt,
-            // Retrieve Result
-            async buttonInteraction => {
-                switch (buttonInteraction.customId) {
-                    case 'confirm':
-                        return { intr: buttonInteraction, value: 'confirmed' };
-                    case 'cancel':
-                        return { intr: buttonInteraction, value: 'cancelled' };
-                    default:
-                        return;
-                }
-            },
-            // Options
-            {
-                time: 15000,
-                reset: true,
-                target: intr.user,
-                stopFilter: message => message.content.toLowerCase() === 'stop',
-                onExpire: async () => {
-                    await intr.deleteReply();
-                },
-            }
-        );
+        const stoppedEmbed = new EmbedBuilder()
+            .setColor(RandomUtils.getSecondaryColor())
+            .setTitle('Auction pausing...')
+            .setDescription('Queued the auction to pause.');
 
-        if (result.value === 'cancelled') {
-            await intr.deleteReply();
-            return;
-        } else if (result.value === 'confirmed') {
-            Logger.info(`Auction queued to pause by ${intr.user.username} (${intr.user.id})`);
-
-            StateUtils.writeAuctionStateValues({
-                status: 'pausing',
-            });
-
-            const stoppedEmbed = new EmbedBuilder()
-                .setColor(RandomUtils.getSecondaryColor())
-                .setTitle('Auction pausing...')
-                .setDescription('Queued the auction to pause.');
-
-            await intr.editReply({ embeds: [stoppedEmbed], components: [] });
-        } else {
-            await intr.deleteReply();
-            return;
-        }
+        await intr.editReply({ embeds: [stoppedEmbed], components: [] });
     }
 }
