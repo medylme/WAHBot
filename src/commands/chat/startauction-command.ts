@@ -240,14 +240,23 @@ ${eventsList.map(event => event).join('\n')}
         thread.setLocked(false);
 
         // Announce in thread
+        const minBid = AuctionConfig.minBid;
+        const maxBid = AuctionConfig.maxBidIncrement;
         const bidsOpenEmbed = new EmbedBuilder()
             .setColor(RandomUtils.getSuccessColor())
             .setTitle(`Bids are open!`)
-            .addFields({
-                name: 'Starting bid',
-                value: `${AuctionConfig.minBid}`,
-                inline: true,
-            });
+            .addFields(
+                {
+                    name: 'Min initial bid',
+                    value: `${minBid}`,
+                    inline: true,
+                },
+                {
+                    name: 'Max initial bid',
+                    value: `${maxBid}`,
+                    inline: true,
+                }
+            );
         await thread.send({ embeds: [bidsOpenEmbed] });
 
         // Announce in main channel
