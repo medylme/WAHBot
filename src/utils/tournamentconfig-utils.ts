@@ -277,6 +277,20 @@ export class TournamentConfigUtils {
             ) {
                 throw new Error('Captain config is invalid!');
             }
+
+            // If proxyDiscId is provided, check if it's a string
+            if (Object.prototype.hasOwnProperty.call(entry, 'proxyDiscId')) {
+                if (typeof entry.proxyDiscId !== 'string') {
+                    throw new Error('Captain config is invalid! (Proxy ID must be a string)');
+                }
+
+                // Check if main discord id is not the same as the proxy id
+                if (entry.proxyDiscId === key) {
+                    throw new Error(
+                        `Captain config is invalid! (Proxy ID can't be the same as the Captain ID)`
+                    );
+                }
+            }
         }
     }
 }
