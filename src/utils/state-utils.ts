@@ -286,11 +286,13 @@ export class StateUtils {
     }
 
     public static async setHighestBid(captainId: string | number, bid: number): Promise<void> {
+        const captainIdString = captainId.toString();
+
         this.AuctionState.highestBid = bid;
-        this.AuctionState.highestBidderId = captainId.toString();
+        this.AuctionState.highestBidderId = captainIdString;
         this.AuctionStats.totalBids++;
 
-        Logger.info(`New highest bid by '${this.Captains[captainId].name}' - ${bid}`);
+        Logger.info(`New highest bid by '${this.Captains[captainIdString].name}' - ${bid}`);
     }
 
     public static async MovePlayerToFreeAgents(): Promise<void> {
