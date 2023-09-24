@@ -188,7 +188,7 @@ export class BidCommand implements Command {
             const highestBidEmbed = new EmbedBuilder()
                 .setTitle('New highest bid!')
                 .setDescription(
-                    `**${captainOsuName}** [Proxy ${proxyName}] has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
+                    `**${captainOsuName}** (Proxy: ${proxyName}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
                 )
                 .setColor(RandomUtils.getTertiaryColor());
             await currentThread.send({ embeds: [highestBidEmbed] });
