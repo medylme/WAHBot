@@ -7,6 +7,7 @@ import {
 import { RateLimiter } from 'discord.js-rate-limiter';
 import fetch from 'node-fetch';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import util from 'node:util';
 
 import { EventData } from '../../models/internal-models.js';
@@ -21,6 +22,7 @@ import {
 } from '../../utils/index.js';
 import { Command, CommandDeferType } from '../index.js';
 
+const require = createRequire(import.meta.url);
 const writeFileAsync = util.promisify(fs.writeFile);
 
 async function writeToFile(
