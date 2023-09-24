@@ -35,12 +35,19 @@ export class CheckCommand implements Command {
                 // Captain Check
                 const captainObject = await StateUtils.getCaptainStateFromOsu(query);
                 if (captainObject !== null) {
+                    const captainDiscordId = captainObject.discordId;
                     const teamName = captainObject.teamname;
+
+                    // Proxy Check
+                    let proxySuffix = '';
+                    if (captainObject.proxyDiscId !== undefined) {
+                        proxySuffix = ` (Proxy: <@${captainObject.proxyDiscId}>)`;
+                    }
 
                     const captainEmbed = new EmbedBuilder()
                         .setTitle('Captain')
                         .setDescription(
-                            `**${osuUsername}** (\`${query}\`) is registered as a **Captain** of Team **${teamName}**.`
+                            `**${osuUsername}** (<@${captainDiscordId}>) is registered as a **Captain** of Team **${teamName}**.${proxySuffix}`
                         )
                         .setColor(RandomUtils.getTertiaryColor());
                     await InteractionUtils.send(intr, captainEmbed);
@@ -99,16 +106,23 @@ export class CheckCommand implements Command {
                 // Captain Check
                 const captainObject = await StateUtils.getCaptainStateFromOsu(query);
                 if (captainObject !== null) {
+                    const captainDiscordId = captainObject.discordId;
                     const teamName = captainObject.teamname;
+
+                    // Proxy Check
+                    let proxySuffix = '';
+                    if (captainObject.proxyDiscId !== undefined) {
+                        proxySuffix = ` (Proxy: <@${captainObject.proxyDiscId}>)`;
+                    }
 
                     const captainEmbed = new EmbedBuilder()
                         .setTitle('Captain')
                         .setDescription(
-                            `**${osuUsername}** (\`${osuId}\`) is registered as a **Captain** of **${teamName}**.`
+                            `**${osuUsername}** (<@${captainDiscordId}>) is registered as a **Captain** of Team **${teamName}**.${proxySuffix}`
                         )
                         .setColor(RandomUtils.getTertiaryColor());
                     await InteractionUtils.send(intr, captainEmbed);
-                    Logger.info(`${baseLog} | id '${osuId}' > Captain - ${teamName}`);
+                    Logger.info(`${baseLog} | Username ${osuUsername} > Captain - ${teamName}`);
                     return;
                 }
 
@@ -118,7 +132,7 @@ export class CheckCommand implements Command {
                     const playerEmbed = new EmbedBuilder()
                         .setTitle('Player')
                         .setDescription(
-                            `**${osuUsername}** (\`${osuId}\`) is registered as a **Player** in **Tier ${playerObject.tier}**.`
+                            `**${osuUsername}** is registered as a **Player** in **Tier ${playerObject.tier}**.`
                         )
                         .setColor(RandomUtils.getPrimaryColor());
                     await InteractionUtils.send(intr, playerEmbed);
@@ -130,7 +144,7 @@ export class CheckCommand implements Command {
                 const notRegisteredEmbed = new EmbedBuilder()
                     .setTitle('Not Registered')
                     .setDescription(
-                        `**${osuUsername}** (\`${osuId}\`) is currently not registered in the bot. If this is a mistake, please contact one of the hosts as soon as possible!`
+                        `**${osuUsername}** is currently not registered in the bot. If this is a mistake, please contact one of the hosts as soon as possible!`
                     )
                     .setColor(RandomUtils.getSecondaryColor());
                 await InteractionUtils.send(intr, notRegisteredEmbed);

@@ -77,6 +77,7 @@ export class StateUtils {
                 name: this.CaptainUsernameMap[CaptainConfig[captainId].osuId],
                 teamname: CaptainConfig[captainId].teamname,
                 balance: AuctionConfig.startingBalance,
+                discordId: captainId,
                 osuId: CaptainConfig[captainId].osuId,
                 teammembers: [],
                 teamvalue: 0,

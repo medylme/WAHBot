@@ -48,6 +48,7 @@ export interface TeamMembers {
 export interface CaptainState {
     name: string;
     teamname: string;
+    discordId: string;
     osuId: number;
     balance: number;
     teammembers: TeamMembers[];
