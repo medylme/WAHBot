@@ -609,26 +609,24 @@ ${eventsList.map(event => event).join('\n')}
             let PausedStateFile = require('../../../result/paused.json');
             try {
                 const resumeData = PausedStateFile as ResumeData;
+
                 Logger.info(`Pause state file found, resuming auction...`);
 
                 resumeData.auctionState.status = 'running';
 
                 // Current Tier & Player
-                initialTierIndex = resumeData.auctionState.currentTierIndex;
-                currentPlayerIndex = resumeData.currentPlayerIndex;
+                initialTierIndex = structuredClone(resumeData.auctionState.currentTierIndex);
+                currentPlayerIndex = structuredClone(resumeData.currentPlayerIndex);
                 Logger.debug(
                     `Resuming from: Tier Index ${initialTierIndex} & Player Index ${currentPlayerIndex}`
                 );
 
                 // Player Order
-                shuffledPlayers = resumeData.shuffledPlayers;
+                shuffledPlayers = structuredClone(resumeData.shuffledPlayers);
                 for (const key in shuffledPlayers) {
                     PlayersData[key] = shuffledPlayers[key];
                 }
                 Logger.info('Player Order (From Paused State):', PlayersData);
-
-                // Misc.
-                await StateUtils.ResumeAuction(resumeData);
 
                 fs.unlink('./result/paused.json', err => {
                     if (err) {
@@ -637,6 +635,8 @@ ${eventsList.map(event => event).join('\n')}
                     }
                     Logger.debug('Pause state file deleted.');
                 });
+
+                await StateUtils.ResumeAuction(resumeData);
 
                 startingAnnouncementEmbed
                     .setColor(RandomUtils.getPrimaryColor())
