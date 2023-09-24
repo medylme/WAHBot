@@ -6,6 +6,7 @@ import {
     ApiKeyConfigProps,
     AuctionCaptainConfigProps,
     AuctionConfigProps,
+    AuctionPlayerConfigProps,
 } from '../models/tournamentconfig-models.js';
 import { Logger } from '../services/index.js';
 
@@ -15,7 +16,7 @@ export class TournamentConfigUtils {
     private static ApiKeyConfig: ApiKeyConfigProps = require('../../config/tournament/apiKeys.json');
     private static AuctionCaptainConfig: AuctionCaptainConfigProps = require('../../config/tournament/captains.json');
     private static AuctionConfig: AuctionConfigProps = require('../../config/tournament/config.json');
-    private static AuctionPlayerConfig: PlayersList = require('../../config/tournament/players.json');
+    private static AuctionPlayerConfig: AuctionPlayerConfigProps = require('../../config/tournament/players.json');
 
     public static async getApiKeysConfig(): Promise<ApiKeyConfigProps> {
         return this.ApiKeyConfig;
@@ -30,7 +31,34 @@ export class TournamentConfigUtils {
     }
 
     public static async getAuctionPlayerConfig(): Promise<PlayersList> {
-        return this.AuctionPlayerConfig;
+        const CaptainConfig = await this.getAuctionCaptainConfig();
+        let CaptainOsuIds: number[] = [];
+        Object.keys(CaptainConfig).forEach(async captainId => {
+            const captainOsuId = CaptainConfig[captainId].osuId;
+            CaptainOsuIds.push(captainOsuId);
+        });
+
+        const PlayerConfig = this.AuctionPlayerConfig;
+        let PlayerArrayWithoutCaptains: PlayersList = {
+            '1': [],
+            '2': [],
+            '3': [],
+            '4': [],
+        };
+        for (let tier = 1; tier <= 4; tier++) {
+            const tierArray = PlayerConfig[tier.toString()];
+            tierArray.forEach(player => {
+                if (!CaptainOsuIds.includes(Number(player))) {
+                    PlayerArrayWithoutCaptains[tier].push(player);
+                } else {
+                    Logger.warn(
+                        `Captain ID '${player}' found in the player list. Automatically excluding from list.`
+                    );
+                }
+            });
+        }
+
+        return PlayerArrayWithoutCaptains;
     }
 
     public static async readConfigs(): Promise<void> {

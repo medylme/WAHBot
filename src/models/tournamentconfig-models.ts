@@ -25,3 +25,7 @@ export interface AuctionConfigProps {
     readonly tierOrder: number[];
     readonly threadPrefix: string;
 }
+
+export interface AuctionPlayerConfigProps {
+    readonly [key: number]: readonly number[];
+}
