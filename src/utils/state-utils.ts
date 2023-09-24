@@ -255,7 +255,17 @@ export class StateUtils {
     }
 
     public static async getHighestBid(): Promise<number> {
-        return this.AuctionState.highestBid;
+        try {
+            const highestBid = this.AuctionState.highestBid;
+
+            if (highestBid === undefined) {
+                return 0;
+            }
+
+            return highestBid;
+        } catch (e) {
+            return 0;
+        }
     }
 
     public static async getHighestBidObject(): Promise<{
