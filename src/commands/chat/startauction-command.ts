@@ -313,13 +313,13 @@ ${eventsList.map(event => event).join('\n')}
             const noBidsEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('No bids!')
-                .setDescription('This player was sent to the free agent pool.');
+                .setDescription('This player was moved to the free agent pool.');
             await thread.send({ embeds: [noBidsEmbed] });
 
             await StateUtils.MovePlayerToFreeAgents();
 
             await mainChannelMessage.edit(
-                `No one bid on this player. They will be placed in the free agent pool. \n${playersLeftMessage}`
+                `No bid was placed on this player. They will be moved to the free agent pool. \n${playersLeftMessage}`
             );
         } else {
             // Add player to winner's team

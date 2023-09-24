@@ -40,7 +40,7 @@ export class BalanceCommand implements Command {
         const balance = await StateUtils.GetBalance(captainDiscId);
         const balanceEmbed = new EmbedBuilder()
             .setTitle('Balance')
-            .setDescription(`Your current balance is **${balance}** points.`)
+            .setDescription(`Your current balance is **${balance}**.`)
             .setColor(RandomUtils.getSuccessColor());
         await InteractionUtils.send(intr, balanceEmbed);
     }
