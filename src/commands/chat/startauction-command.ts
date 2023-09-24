@@ -312,11 +312,15 @@ ${eventsList.map(event => event).join('\n')}
 
         // Announce winner in thread and main channel
         const playersLeft = playerList.length - currentPlayerIndex - 1;
-        const playersLeftMessage = `${
-            playersLeft > 1
-                ? 'There is only **1** player left in this tier'
-                : `There are **${playersLeft}** players left in this tier (make sure you get at least one per tier)`
-        }!`;
+        let playersLeftMessage: string;
+
+        if (playersLeft === 0) {
+            playersLeftMessage = `No players left in this tier!`;
+        } else if (playersLeft === 1) {
+            playersLeftMessage = `There is only **${playersLeft}** player left in this tier (make sure you get at least one)!`;
+        } else {
+            playersLeftMessage = `There are **${playersLeft}** players left in this tier (make sure you get at least one)!`;
+        }
 
         const highestBidObject = await StateUtils.getHighestBidObject();
         if (highestBidObject === undefined) {
