@@ -7,6 +7,7 @@ export interface AuctionCaptainConfigProps {
     readonly [key: string]: {
         readonly teamname: string;
         readonly osuId: number;
+        readonly proxyDiscId: number;
     };
 }
 
@@ -23,8 +24,4 @@ export interface AuctionConfigProps {
     readonly shufflePlayers: boolean;
     readonly tierOrder: number[];
     readonly threadPrefix: string;
-}
-
-export interface AuctionPlayerConfigProps {
-    readonly [key: string]: readonly number[];
 }

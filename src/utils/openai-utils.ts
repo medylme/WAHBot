@@ -4,12 +4,12 @@ import { Configuration, OpenAIApi } from 'openai';
 import { TournamentConfigUtils } from './tournamentconfig-utils.js';
 import { Logger } from '../services/logger.js';
 
-const ApiKeyConfig = await TournamentConfigUtils.getApiKeysConfig();
+const ApiKeysConfig = await TournamentConfigUtils.getApiKeysConfig();
 
 export class OpenAIUtils {
-    private static readonly API_KEY = ApiKeyConfig.openaiApiKey;
+    private static readonly apiKey = ApiKeysConfig.openaiApiKey;
     private static readonly configuration = new Configuration({
-        apiKey: this.API_KEY,
+        apiKey: this.apiKey,
     });
     private static readonly openai = new OpenAIApi(this.configuration);
 
@@ -19,7 +19,7 @@ export class OpenAIUtils {
         try {
             const response = await fetch(openaiEndpoint, {
                 headers: {
-                    Authorization: `Bearer ${this.API_KEY}`,
+                    Authorization: `Bearer ${this.apiKey}`,
                 },
             });
             const data = await response.json();

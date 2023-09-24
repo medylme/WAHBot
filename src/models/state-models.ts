@@ -52,6 +52,7 @@ export interface CaptainState {
     balance: number;
     teammembers: TeamMembers[];
     teamvalue: number;
+    proxyDiscId?: string;
 }
 
 export interface Captains {

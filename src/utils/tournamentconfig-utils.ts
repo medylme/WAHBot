@@ -1,21 +1,21 @@
 import { createRequire } from 'node:module';
 
 import { OpenAIUtils, OsuApiUtils } from './index.js';
+import { PlayersList } from '../models/state-models.js';
 import {
     ApiKeyConfigProps,
     AuctionCaptainConfigProps,
     AuctionConfigProps,
-    AuctionPlayerConfigProps,
 } from '../models/tournamentconfig-models.js';
 import { Logger } from '../services/index.js';
 
 const require = createRequire(import.meta.url);
 
 export class TournamentConfigUtils {
-    private static ApiKeyConfig: ApiKeyConfigProps;
-    private static AuctionCaptainConfig: AuctionCaptainConfigProps;
-    private static AuctionConfig: AuctionConfigProps;
-    private static AuctionPlayerConfig: AuctionPlayerConfigProps;
+    private static ApiKeyConfig: ApiKeyConfigProps = require('../../config/tournament/apiKeys.json');
+    private static AuctionCaptainConfig: AuctionCaptainConfigProps = require('../../config/tournament/captains.json');
+    private static AuctionConfig: AuctionConfigProps = require('../../config/tournament/config.json');
+    private static AuctionPlayerConfig: PlayersList = require('../../config/tournament/players.json');
 
     public static async getApiKeysConfig(): Promise<ApiKeyConfigProps> {
         return this.ApiKeyConfig;
@@ -29,16 +29,18 @@ export class TournamentConfigUtils {
         return this.AuctionConfig;
     }
 
-    public static async getAuctionPlayerConfig(): Promise<AuctionPlayerConfigProps> {
+    public static async getAuctionPlayerConfig(): Promise<PlayersList> {
         return this.AuctionPlayerConfig;
     }
 
-    public static async setConfigs(): Promise<void> {
+    public static async readConfigs(): Promise<void> {
+        Logger.debug('Read tournament configs.');
+
         try {
-            this.ApiKeyConfig = require('../../config/tournament/apiKeys.json');
-            this.AuctionCaptainConfig = require('../../config/tournament/captains.json');
-            this.AuctionConfig = require('../../config/tournament/config.json');
-            this.AuctionPlayerConfig = require('../../config/tournament/players.json');
+            this.ApiKeyConfig = await require('../../config/tournament/apiKeys.json');
+            this.AuctionCaptainConfig = await require('../../config/tournament/captains.json');
+            this.AuctionConfig = await require('../../config/tournament/config.json');
+            this.AuctionPlayerConfig = await require('../../config/tournament/players.json');
         } catch (e) {
             Logger.error(
                 'Failed to load one (or more) config file! Did you set all config files up correctly?'

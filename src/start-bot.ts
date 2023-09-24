@@ -155,8 +155,8 @@ async function start(): Promise<void> {
 
     // Tournament Configs
     try {
-        await TournamentConfigUtils.setConfigs();
         await TournamentConfigUtils.checkTournamentConfigs();
+        //await TournamentConfigUtils.readConfigs();
     } catch (e) {
         Logger.error(e.message);
         process.exit();

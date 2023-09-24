@@ -327,14 +327,14 @@ ${eventsList.map(event => event).join('\n')}
             const highestBid = highestBidObject.bid;
             const highestBidderId = highestBidObject.bidderId;
             const highestBidderTeamName = await StateUtils.GetTeamName(highestBidderId);
-            const highestBidderName = highestBidObject.bidderName;
+            const highestBidderOsuName = highestBidObject.bidderName;
             const soldThreadEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getPrimaryColor())
                 .setTitle('Sold!')
                 .setFields([
                     {
                         name: 'Captain',
-                        value: `${highestBidderName}`,
+                        value: `${highestBidderOsuName}`,
                         inline: true,
                     },
                     {
@@ -351,7 +351,7 @@ ${eventsList.map(event => event).join('\n')}
             await thread.send({ embeds: [soldThreadEmbed] });
 
             await mainChannelMessage.edit(
-                `**${username}** has been sold to **${highestBidderName}** for **${highestBid}**! \n${playersLeftMessage}`
+                `**${username}** has been sold to **${highestBidderOsuName}** (${highestBidderTeamName}) for **${highestBid}**! \n${playersLeftMessage}`
             );
         }
 
@@ -369,7 +369,7 @@ ${eventsList.map(event => event).join('\n')}
         const loadingMessages = RandomUtils.shuffle(StartAuctionCommand.loadingMessages);
 
         // Load Configs
-        let PlayersData: PlayersList = require('../../../config/tournament/players.json');
+        let PlayersData: PlayersList = await TournamentConfigUtils.getAuctionPlayerConfig();
         const auctionChannel = (await channel.guild.channels.fetch(channel.id)) as TextChannel;
 
         // Check if auction is already ongoing

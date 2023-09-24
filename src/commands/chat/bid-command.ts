@@ -34,7 +34,9 @@ export class BidCommand implements Command {
 
         // Check if player is captain
         const isCaptain = await StateUtils.isCaptainFromDisc(intr.user.id);
-        if (!isCaptain) {
+        const isProxyCaptain = await StateUtils.isProxyCaptainFromDisc(intr.user.id);
+
+        if (!isCaptain && !isProxyCaptain) {
             const notCaptainEmbed = new EmbedBuilder()
                 .setTitle('Not a captain')
                 .setDescription(`Only captains can bid on players.`)
@@ -153,17 +155,31 @@ export class BidCommand implements Command {
         // Set new highest bid
         await StateUtils.setHighestBid(intr.user.id, bidAmount);
 
-        // Send new highest bid message in thread
         const newHighestBidObject = await StateUtils.getHighestBidObject();
-        const highestBidEmbed = new EmbedBuilder()
-            .setTitle('New highest bid!')
-            .setDescription(
-                `**${
-                    newHighestBidObject.bidderName
-                }** (${intr.user.toString()}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.`
-            )
-            .setColor(RandomUtils.getTertiaryColor());
-        await currentThread.send({ embeds: [highestBidEmbed] });
+        const captainOsuName = newHighestBidObject.bidderName;
+        const captainDiscordName = intr.user.toString();
+
+        if (isProxyCaptain) {
+            const proxyName = intr.user.toString();
+
+            // Send new highest bid message in thread
+            const highestBidEmbed = new EmbedBuilder()
+                .setTitle('New highest bid!')
+                .setDescription(
+                    `**${captainOsuName}** [Proxy ${proxyName}] has set a new highest bid of **${bidAmount}**! \nTimer has been reset.`
+                )
+                .setColor(RandomUtils.getTertiaryColor());
+            await currentThread.send({ embeds: [highestBidEmbed] });
+        } else {
+            // Send new highest bid message in thread
+            const highestBidEmbed = new EmbedBuilder()
+                .setTitle('New highest bid!')
+                .setDescription(
+                    `**${captainOsuName}** (${captainDiscordName}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.`
+                )
+                .setColor(RandomUtils.getTertiaryColor());
+            await currentThread.send({ embeds: [highestBidEmbed] });
+        }
 
         // Reset bid timer
         const timeRemaining = await StateUtils.getTimeRemaining();
