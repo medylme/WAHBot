@@ -4,7 +4,7 @@ import { Logger } from '../services/index.js';
 const ApiKeysConfig = await TournamentConfigUtils.getApiKeysConfig();
 
 export class OsuApiUtils {
-    private static apiKey: string = ApiKeysConfig.osuApiKey;
+    private static readonly apiKey = ApiKeysConfig.osuApiKey;
 
     public static async pingApi(): Promise<boolean> {
         // Test osu! key
@@ -13,8 +13,6 @@ export class OsuApiUtils {
         try {
             const response = await fetch(osuEndpoint);
             const data = await response.json();
-
-            Logger.debug('osu! api | ping', data);
 
             if (data.error) {
                 throw new Error(data.error);
