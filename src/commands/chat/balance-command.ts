@@ -35,7 +35,7 @@ export class BalanceCommand implements Command {
         if (!isCaptain && !isProxyCaptain) {
             const notCaptainEmbed = new EmbedBuilder()
                 .setTitle('Not a captain')
-                .setDescription(`Only captains can bid on players.`)
+                .setDescription(`Only captains (or their proxy) can bid on players.`)
                 .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, notCaptainEmbed);
             return;
