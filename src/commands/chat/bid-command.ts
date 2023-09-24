@@ -126,24 +126,9 @@ export class BidCommand implements Command {
         const minBid = AuctionConfig.minBid;
         const currentHighestBid = await StateUtils.getHighestBid();
 
+        // - Lower bound threshold (only applies after initial bid)
         if (currentHighestBid > minBid) {
             const minIncrement = AuctionConfig.minBidIncrement;
-            const maxIncrement = AuctionConfig.maxBidIncrement;
-
-            // - Upper bound threshold
-            const upperBound = currentHighestBid + maxIncrement;
-            if (bidAmount > upperBound) {
-                const maxBidExceededEmbed = new EmbedBuilder()
-                    .setTitle('Bid too high')
-                    .setDescription(
-                        `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}**; You need to bid **${upperBound}** or lower!`
-                    )
-                    .setColor(RandomUtils.getSecondaryColor());
-                await InteractionUtils.send(intr, maxBidExceededEmbed);
-                return;
-            }
-
-            // - Lower bound threshold
             let lowerBound = currentHighestBid + minIncrement;
             if (bidAmount < lowerBound) {
                 const notHighestBidEmbed = new EmbedBuilder()
@@ -155,6 +140,20 @@ export class BidCommand implements Command {
                 await InteractionUtils.send(intr, notHighestBidEmbed);
                 return;
             }
+        }
+
+        // - Upper bound threshold
+        const maxIncrement = AuctionConfig.maxBidIncrement;
+        const upperBound = currentHighestBid + maxIncrement;
+        if (bidAmount > upperBound) {
+            const maxBidExceededEmbed = new EmbedBuilder()
+                .setTitle('Bid too high')
+                .setDescription(
+                    `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}**; You need to bid **${upperBound}** or lower!`
+                )
+                .setColor(RandomUtils.getSecondaryColor());
+            await InteractionUtils.send(intr, maxBidExceededEmbed);
+            return;
         }
 
         // Set new highest bid
