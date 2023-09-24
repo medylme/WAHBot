@@ -53,6 +53,7 @@ export class PauseAuctionCommand implements Command {
                 .setColor(RandomUtils.getErrorColor());
 
             await InteractionUtils.send(intr, biddingNotActiveEmbed);
+            return;
         }
 
         Logger.info(`Auction queued to pause by ${intr.user.username} (${intr.user.id})`);
