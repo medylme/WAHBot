@@ -84,7 +84,7 @@ export class BidCommand implements Command {
         // Check if team is already full
         const maxTeamSize = AuctionConfig.maxTeamSize;
         const currentTeam = await StateUtils.GetTeamMembers(captainDiscId);
-        if (currentTeam.length >= maxTeamSize) {
+        if (currentTeam.length >= maxTeamSize - 1) {
             const teamFullEmbed = new EmbedBuilder()
                 .setTitle('Team already full')
                 .setDescription(
