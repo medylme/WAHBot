@@ -31,7 +31,7 @@ async function writeToFile(
 ): Promise<void> {
     try {
         await writeFileAsync(filename, data);
-        Logger.debug(`Data written to ${filename}`, data);
+        //Logger.debug(`Data written to ${filename}`, data);
     } catch (error) {
         Logger.error(`Error writing data to ${filename}: ${error}`);
     }
