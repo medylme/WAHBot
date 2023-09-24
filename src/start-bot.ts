@@ -10,6 +10,7 @@ import {
     BidCommand,
     CheckCommand,
     ClearThreadsCommand,
+    CurrentTeamCommand,
     HelpCommand,
     //InfoCommand,
     PauseAuctionCommand,
@@ -80,6 +81,7 @@ async function start(): Promise<void> {
         new BalanceCommand(),
         new SkipPlayerCommand(),
         new CheckCommand(),
+        new CurrentTeamCommand(),
 
         // Message Context Commands
         //new ViewDateSent(),

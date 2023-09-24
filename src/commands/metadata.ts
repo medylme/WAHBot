@@ -174,6 +174,15 @@ export const ChatCommandMetadata: {
         dm_permission: false,
         default_member_permissions: undefined,
     },
+    CURRENTTEAM: {
+        type: ApplicationCommandType.ChatInput,
+        name: 'currentteam',
+        name_localizations: undefined,
+        description: 'Show the team you have built so far in the current auction.',
+        description_localizations: undefined,
+        dm_permission: false,
+        default_member_permissions: undefined,
+    },
 };
 
 export const MessageCommandMetadata: {

@@ -9,3 +9,4 @@ export { BalanceCommand } from './balance-command.js';
 export { PauseAuctionCommand } from './pauseauction-command.js';
 export { SkipPlayerCommand } from './skipplayer-command.js';
 export { CheckCommand } from './check-command.js';
+export { CurrentTeamCommand } from './currentteam-command.js';
