@@ -127,7 +127,8 @@ export class TournamentConfigUtils {
             !this.AuctionConfig.startingBalance ||
             !this.AuctionConfig.shufflePlayers ||
             !this.AuctionConfig.tierOrder ||
-            !this.AuctionConfig.threadPrefix
+            !this.AuctionConfig.threadPrefix ||
+            !this.AuctionConfig.trialRunEnabled
         ) {
             throw new Error('Tournament config is missing required fields!');
         }
@@ -181,6 +182,9 @@ export class TournamentConfigUtils {
         if (typeof this.AuctionConfig.threadPrefix !== 'string') {
             throw new Error(`'threadPrefix' must be a string!`);
         }
+
+        if (typeof this.AuctionConfig.trialRunEnabled !== 'boolean') {
+            throw new Error(`'trialRunEnabled' must be a boolean!`);
         }
 
         // Content Checks

@@ -24,6 +24,7 @@ export interface AuctionConfigProps {
     readonly shufflePlayers: boolean;
     readonly tierOrder: number[];
     readonly threadPrefix: string;
+    readonly trialRunEnabled: boolean;
 }
 
 export interface AuctionPlayerConfigProps {

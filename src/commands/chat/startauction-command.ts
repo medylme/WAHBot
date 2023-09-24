@@ -179,6 +179,172 @@ ${eventsList.map(event => event).join('\n')}
         return resultsEmbeds;
     }
 
+    private async trialRunAuction(
+        auctionChannel: TextChannel,
+        currentPlayer: number,
+        username: string
+    ): Promise<void> {
+        const auctionDuration: number = AuctionConfig.auctionDuration;
+        Logger.info(`Auctioning: Trial Run | '${username}' (${currentPlayer})`);
+
+        // Create thread
+        const threadPrefix = AuctionConfig.threadPrefix;
+        const thread = await auctionChannel.threads.create({
+            name: `${threadPrefix} | Trial Run | ${username}`,
+            autoArchiveDuration: 1440,
+            reason: 'Auctioning a player',
+        });
+        await thread.setLocked(true);
+        await StateUtils.writeAuctionStateValues({
+            currentThreadId: thread.id,
+        });
+
+        // Announce next up
+        const nextUpEmbedDesc = 'First up!';
+        const nextUpEmbed = new EmbedBuilder()
+            .setColor(RandomUtils.getPrimaryColor())
+            .setTitle(username)
+            .setDescription('The bidding will start in a few seconds...')
+            .setURL(`https://osu.ppy.sh/users/${currentPlayer}`)
+            .setAuthor({
+                name: `${nextUpEmbedDesc}`,
+            })
+            .setImage(`https://s.ppy.sh/a/${currentPlayer}`)
+            .addFields([
+                {
+                    name: 'Tier',
+                    value: `69`,
+                    inline: true,
+                },
+            ])
+            .setFooter({
+                text: `This is a trial run and will not affect your balance.`,
+            });
+        await thread.send({ embeds: [nextUpEmbed] });
+
+        // Wait a bit
+        await delay(4000);
+
+        await StateUtils.writeAuctionStateValues({
+            biddingActive: true,
+            timeRemaining: auctionDuration,
+        });
+        await thread.setLocked(false);
+
+        // Announce in thread
+        const minBid = AuctionConfig.minBid;
+        const maxBid = AuctionConfig.maxBidIncrement;
+        const bidsOpenEmbed = new EmbedBuilder()
+            .setColor(RandomUtils.getSuccessColor())
+            .setTitle(`Bids are open!`)
+            .setDescription('Use `/bid [amount]` to bid on this player!')
+            .addFields(
+                {
+                    name: 'Min initial bid',
+                    value: `${minBid}`,
+                    inline: true,
+                },
+                {
+                    name: 'Max initial bid',
+                    value: `${maxBid}`,
+                    inline: true,
+                }
+            );
+        await thread.send({ embeds: [bidsOpenEmbed] });
+
+        // Announce in main channel
+        const mainChannelMessage = await auctionChannel.send(
+            `Bidding for **${username}** has started! \nTime remaining: **${auctionDuration}** seconds!`
+        );
+
+        // Timer
+        const waitForEnd = new Promise<void>(resolve => {
+            const interval = setInterval(async () => {
+                // Check if auction has ended
+                const timeRemaining = await StateUtils.getTimeRemaining();
+                if (timeRemaining <= 0) {
+                    clearInterval(interval);
+                    resolve();
+                    return;
+                }
+
+                // Update time remaining in thread
+                await mainChannelMessage.edit(
+                    `Bidding for **${username}** has started! \nTime remaining: **${timeRemaining}** seconds.`
+                );
+
+                // Decrement time remaining in state
+                await StateUtils.writeAuctionStateValues({
+                    timeRemaining: (await StateUtils.getTimeRemaining()) - 1,
+                });
+            }, 1000);
+        });
+
+        await waitForEnd;
+
+        // Close bidding
+        await StateUtils.writeAuctionStateValues({
+            biddingActive: false,
+        });
+
+        const auctionEndEmbed = new EmbedBuilder()
+            .setColor(RandomUtils.getDangerColor())
+            .setTitle(`Bids are now closed!`);
+        await thread.send({ embeds: [auctionEndEmbed] });
+        await thread.setLocked(true);
+
+        await delay(1000);
+
+        const highestBidObject = await StateUtils.getHighestBidObject();
+        if (highestBidObject === undefined) {
+            const noBidsEmbed = new EmbedBuilder()
+                .setColor(RandomUtils.getSecondaryColor())
+                .setTitle('No bids!')
+                .setDescription('This player would have been moved to the free agent pool.');
+            await thread.send({ embeds: [noBidsEmbed] });
+
+            await StateUtils.MovePlayerToFreeAgents();
+
+            await mainChannelMessage.edit(
+                `No bid was placed on this player. They would have been moved to the free agent pool.`
+            );
+        } else {
+            // Announce winner in thread and main channel
+            const highestBid = highestBidObject.bid;
+            const highestBidderId = highestBidObject.bidderId;
+            const highestBidderTeamName = await StateUtils.GetTeamName(highestBidderId);
+            const highestBidderOsuName = highestBidObject.bidderName;
+            const soldThreadEmbed = new EmbedBuilder()
+                .setColor(RandomUtils.getPrimaryColor())
+                .setTitle('Sold!')
+                .setFields([
+                    {
+                        name: 'Captain',
+                        value: `${highestBidderOsuName}`,
+                        inline: true,
+                    },
+                    {
+                        name: 'Team',
+                        value: `${highestBidderTeamName}`,
+                        inline: true,
+                    },
+                    {
+                        name: 'Price',
+                        value: `${highestBid}`,
+                        inline: true,
+                    },
+                ]);
+            await thread.send({ embeds: [soldThreadEmbed] });
+
+            await mainChannelMessage.edit(
+                `**${username}** would have been sold to **${highestBidderOsuName}** (${highestBidderTeamName}) for **${highestBid}**!`
+            );
+        }
+
+        await delay(3 * 1000);
+        await thread.setArchived(true);
+    }
+
     private async auctionPlayer(
         auctionChannel: TextChannel,
         currentTier: number,
@@ -202,8 +368,8 @@ ${eventsList.map(event => event).join('\n')}
             autoArchiveDuration: 1440,
             reason: 'Auctioning a player',
         });
-        thread.setLocked(true);
-        StateUtils.writeAuctionStateValues({
+        await thread.setLocked(true);
+        await StateUtils.writeAuctionStateValues({
             currentThreadId: thread.id,
         });
 
@@ -239,7 +405,7 @@ ${eventsList.map(event => event).join('\n')}
             biddingActive: true,
             timeRemaining: auctionDuration,
         });
-        thread.setLocked(false);
+        await thread.setLocked(false);
 
         // Announce in thread
         const minBid = AuctionConfig.minBid;
@@ -339,7 +505,7 @@ ${eventsList.map(event => event).join('\n')}
             );
         } else {
             // Add player to winner's team
-            StateUtils.SellPlayer();
+            await StateUtils.SellPlayer();
 
             // Announce winner in thread and main channel
             const highestBid = highestBidObject.bid;
@@ -518,6 +684,37 @@ ${eventsList.map(event => event).join('\n')}
         }
         await intr.channel.send({ embeds: [startingAnnouncementEmbed] });
 
+        // Trial Run
+        if (AuctionConfig.trialRunEnabled && !resuming) {
+            await delay(5000);
+
+            // Announce next tier
+            const TrialRunEmbed = new EmbedBuilder()
+                .setColor(RandomUtils.getTertiaryColor())
+                .setTitle('Before we begin...')
+                .setDescription(
+                    `Let's do a trial run to make sure everyone knows what to do! This will have no effect on your balance.`
+                );
+            await auctionChannel.send({ embeds: [TrialRunEmbed] });
+
+            await delay(10000);
+
+            // Auction 'dyl'
+            const trialRunOsuId = 9507985;
+            const trialRunUsername = 'dyl';
+
+            await this.trialRunAuction(auctionChannel, trialRunOsuId, trialRunUsername);
+
+            const TrialRunEndEmbed = new EmbedBuilder()
+                .setColor(RandomUtils.getTertiaryColor())
+                .setTitle(`Trial run complete.`)
+                .setDescription(
+                    `Hopefully that makes things a bit clearer. Let's get started with the real auction!`
+                );
+
+            await auctionChannel.send({ embeds: [TrialRunEndEmbed] });
+        }
+
         await delay(10000);
 
         // Pause Data variables
@@ -534,7 +731,7 @@ ${eventsList.map(event => event).join('\n')}
             }
 
             // Update current tier index
-            StateUtils.writeAuctionStateValues({
+            await StateUtils.writeAuctionStateValues({
                 currentTierIndex: i,
                 currentTier: tierOrder[i],
             });
