@@ -188,17 +188,17 @@ ${eventsList.map(event => event).join('\n')}
         playerList: number[]
     ): Promise<void> {
         const auctionDuration: number = AuctionConfig.auctionDuration;
+        const playerNumber = currentPlayerIndex + 1;
+        const playersInTier = playerList.length;
 
         Logger.info(
-            `Auctioning player Tier ${currentTier} #${
-                currentPlayerIndex + 1
-            } '${username}' (${currentPlayer})...`
+            `Auctioning: Tier ${currentTier} - ${playerNumber}/${playersInTier} | '${username}' (${currentPlayer})`
         );
 
         // Create thread
         const threadPrefix = AuctionConfig.threadPrefix;
         const thread = await auctionChannel.threads.create({
-            name: `${threadPrefix}: Tier ${currentTier} | ${username}`,
+            name: `${threadPrefix} | Tier ${currentTier} | #${playerNumber}: ${username}`,
             autoArchiveDuration: 1440,
             reason: 'Auctioning a player',
         });
