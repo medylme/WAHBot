@@ -303,8 +303,6 @@ ${eventsList.map(event => event).join('\n')}
                 .setDescription('This player would have been moved to the free agent pool.');
             await thread.send({ embeds: [noBidsEmbed] });
 
-            await StateUtils.MovePlayerToFreeAgents();
-
             await mainChannelMessage.edit(
                 `No bid was placed on this player. They would have been moved to the free agent pool.`
             );
@@ -492,13 +490,13 @@ ${eventsList.map(event => event).join('\n')}
 
         const highestBidObject = await StateUtils.getHighestBidObject();
         if (highestBidObject === undefined) {
+            await StateUtils.MovePlayerToFreeAgents();
+
             const noBidsEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('No bids!')
                 .setDescription('This player was moved to the free agent pool.');
             await thread.send({ embeds: [noBidsEmbed] });
-
-            await StateUtils.MovePlayerToFreeAgents();
 
             await mainChannelMessage.edit(
                 `No bid was placed on this player. They will be moved to the free agent pool. \n${playersLeftMessage}`
@@ -820,7 +818,7 @@ ${eventsList.map(event => event).join('\n')}
                 for (const key in PlayersData) {
                     this.pauseData.shuffledPlayers[key] = PlayersData[key];
                 }
-                this.pauseData.freeAgents = await StateUtils.GetFreeAgentObject();
+                this.pauseData.freeAgents = await StateUtils.GetFreeAgentList();
                 this.pauseData.captains = await StateUtils.GetAuctionResults();
                 this.pauseData.currentPlayerIndex = pausePlayerIndex;
                 try {

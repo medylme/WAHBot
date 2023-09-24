@@ -5,7 +5,6 @@ import {
     Captains,
     CaptainState,
     ResumeData,
-    TeamMembers,
 } from '../models/state-models.js';
 import { Logger } from '../services/logger.js';
 
@@ -44,7 +43,7 @@ export class StateUtils {
     };
     private static AuctionState: AuctionState = this.AuctionStateDefaults;
     private static AuctionStats: AuctionStats = this.AuctionStatsDefaults;
-    private static FreeAgents: TeamMembers[] = [];
+    private static FreeAgents: number[] = [];
     private static Captains: Captains = {};
     private static CaptainUsernameMapPopulated = false;
     private static CaptainUsernameMap: { [key: number]: string } = {};
@@ -299,25 +298,12 @@ export class StateUtils {
     public static async MovePlayerToFreeAgents(): Promise<void> {
         Logger.info(`No bids. Player moved to free agents.`);
 
-        let playerId = this.AuctionState.currentPlayer;
-        let playerName = this.AuctionState.currentPlayerName;
-
-        // Add player to free agents
-        this.FreeAgents.push({
-            id: playerId,
-            name: playerName,
-            tier: this.AuctionState.currentTier,
-            cost: 0,
-        });
-    }
-
-    public static async GetFreeAgentObject(): Promise<TeamMembers[]> {
-        return this.FreeAgents;
+        const playerId = this.AuctionState.currentPlayer;
+        this.FreeAgents.push(Number(playerId));
     }
 
     public static async GetFreeAgentList(): Promise<number[]> {
-        let freeAgentsArray = this.FreeAgents.map(player => Number(player.id));
-        return freeAgentsArray;
+        return this.FreeAgents;
     }
 
     private static ClampToTiers(number: number): 1 | 2 | 3 | 4 {
@@ -408,8 +394,8 @@ export class StateUtils {
         };
 
         // Set free agents
-        for (const agent of resumeData.freeAgents) {
-            this.FreeAgents.push(agent);
+        for (const playerId of resumeData.freeAgents) {
+            this.FreeAgents.push(playerId);
         }
 
         // Set auction stats

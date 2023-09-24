@@ -22,7 +22,7 @@ export interface ResumeData {
     auctionState: AuctionState;
     auctionStats: AuctionStats;
     currentPlayerIndex: number;
-    freeAgents: TeamMembers[];
+    freeAgents: number[];
     shuffledPlayers: PlayersList;
     captains: Captains;
 }
