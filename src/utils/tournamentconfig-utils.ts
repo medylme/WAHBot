@@ -135,51 +135,52 @@ export class TournamentConfigUtils {
         // Type Checks
 
         if (typeof this.AuctionConfig.shufflePlayers !== 'boolean') {
-            throw new Error(`Shuffle players must be true or false!`);
+            throw new Error(`'shufflePlayers' must be true or false!`);
         }
 
         if (typeof this.AuctionConfig.auctionDuration !== 'number') {
-            throw new Error(`Auction duration must be a number!`);
+            throw new Error(`'auctionDuration' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.resetDuration !== 'number') {
-            throw new Error(`Reset duration must be a number!`);
+            throw new Error(`'resetDuration' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.minBid !== 'number') {
-            throw new Error(`Min bid must be a number!`);
+            throw new Error(`'minBid' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.maxBid !== 'number') {
-            throw new Error(`Max bid must be a number!`);
+            throw new Error(`'maxBid' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.minBidIncrement !== 'number') {
-            throw new Error(`Min bid increment must be a number!`);
+            throw new Error(`'minBidIncrement' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.maxBidIncrement !== 'number') {
-            throw new Error(`Max bid increment must be a number!`);
+            throw new Error(`'maxBidIncrement' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.startingBalance !== 'number') {
-            throw new Error(`Starting balance must be a number!`);
+            throw new Error(`'startingBalance' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.maxTeamSize !== 'number') {
-            throw new Error(`Max team size must be a number!`);
+            throw new Error(`'maxTeamSize' must be a number!`);
         }
 
         if (typeof this.AuctionConfig.shufflePlayers !== 'boolean') {
-            throw new Error(`Shuffle players must be a boolean!`);
+            throw new Error(`'shufflePlayers' must be a boolean!`);
         }
 
         if (typeof this.AuctionConfig.AIReport !== 'boolean') {
-            throw new Error(`AI report must be a boolean!`);
+            throw new Error(`'AIReport' must be a boolean!`);
         }
 
         if (typeof this.AuctionConfig.threadPrefix !== 'string') {
-            throw new Error(`Thread prefix must be a string!`);
+            throw new Error(`'threadPrefix' must be a string!`);
+        }
         }
 
         // Content Checks
