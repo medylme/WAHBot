@@ -28,8 +28,10 @@ export class PauseAuctionCommand implements Command {
     ];
 
     public async execute(intr: ChatInputCommandInteraction, _data: EventData): Promise<void> {
+        const state = await StateUtils.getState();
+
         const notOngoingEmbed = new EmbedBuilder().setColor(RandomUtils.getErrorColor());
-        switch (await StateUtils.getStatus()) {
+        switch (state.status) {
             case 'running':
                 break;
             case 'paused':
@@ -46,6 +48,18 @@ export class PauseAuctionCommand implements Command {
 
                 await InteractionUtils.send(intr, notOngoingEmbed);
                 return;
+        }
+
+        // Check if bidding is active
+        if (!state.biddingActive) {
+            const biddingNotActiveEmbed = new EmbedBuilder()
+                .setTitle('Bidding not active')
+                .setDescription(
+                    'You can only pause the auction while bidding is active. This is to prevent unexpected behavior.'
+                )
+                .setColor(RandomUtils.getErrorColor());
+
+            await InteractionUtils.send(intr, biddingNotActiveEmbed);
         }
 
         const confirmEmbed = new EmbedBuilder()
