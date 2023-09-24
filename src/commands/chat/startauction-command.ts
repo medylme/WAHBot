@@ -103,7 +103,7 @@ export class StartAuctionCommand implements Command {
                         .slice(i, i + 25)
                         .map(team => {
                             return {
-                                name: `Team **${team.teamname}** *($${team.teamvalue})*`,
+                                name: `Team **'${team.teamname}'** *(${team.teamvalue})*`,
                                 value: `${team.name} **(C)**\n${team.teammembers
                                     .map(
                                         player =>
