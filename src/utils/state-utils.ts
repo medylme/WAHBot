@@ -50,12 +50,6 @@ export class StateUtils {
     private static CaptainUsernameMap: { [key: number]: string } = {};
 
     private static async populateCaptainUsernameMap(): Promise<void> {
-        if (this.CaptainUsernameMapPopulated) {
-            return;
-        }
-
-        Logger.debug('Captain username map empty. Fetching from osu! API...');
-
         try {
             Object.keys(CaptainConfig).forEach(async captainId => {
                 const osuId = CaptainConfig[captainId].osuId;
@@ -70,6 +64,8 @@ export class StateUtils {
                 this.CaptainUsernameMap[osuId] = username;
                 Logger.debug(`Captain ID '${osuId}' mapped to username '${username}'.`);
             });
+
+            this.CaptainUsernameMapPopulated = true;
         } catch (e) {
             throw new Error(e);
         }
@@ -95,7 +91,10 @@ export class StateUtils {
         this.FreeAgents = [];
         this.Captains = {};
 
-        await this.populateCaptainUsernameMap();
+        if (!this.CaptainUsernameMapPopulated) {
+            Logger.debug('Captain username map empty. Fetching from osu! API...');
+            await this.populateCaptainUsernameMap();
+        }
 
         try {
             await this.getCaptainsFromConfig();
