@@ -7,7 +7,7 @@ export interface AuctionCaptainConfigProps {
     readonly [key: string]: {
         readonly teamname: string;
         readonly osuId: number;
-        readonly proxyDiscId: number;
+        readonly proxyDiscId: string;
     };
 }
 

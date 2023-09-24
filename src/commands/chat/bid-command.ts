@@ -36,6 +36,11 @@ export class BidCommand implements Command {
         const isCaptain = await StateUtils.isCaptainFromDisc(intr.user.id);
         const isProxyCaptain = await StateUtils.isProxyCaptainFromDisc(intr.user.id);
 
+        let captainDiscId: string = intr.user.id;
+        if (isProxyCaptain) {
+            captainDiscId = await StateUtils.getCaptainIdFromProxyDisc(intr.user.id);
+        }
+
         if (!isCaptain && !isProxyCaptain) {
             const notCaptainEmbed = new EmbedBuilder()
                 .setTitle('Not a captain')
@@ -67,7 +72,7 @@ export class BidCommand implements Command {
 
         // Check if team is already full
         const maxTeamSize = AuctionConfig.maxTeamSize;
-        const currentTeam = await StateUtils.GetTeamMembers(intr.user.id);
+        const currentTeam = await StateUtils.GetTeamMembers(captainDiscId);
         if (currentTeam.length >= maxTeamSize) {
             const teamFullEmbed = new EmbedBuilder()
                 .setTitle('Team already full')
@@ -80,7 +85,7 @@ export class BidCommand implements Command {
         }
 
         // Check if captain has balance to bid
-        const captainState = await StateUtils.getCaptainStateFromDisc(intr.user.id);
+        const captainState = await StateUtils.getCaptainStateFromDisc(captainDiscId);
         const captainBalance = captainState.balance;
         if (bidAmount > captainBalance) {
             const notEnoughBalanceEmbed = new EmbedBuilder()
@@ -153,7 +158,7 @@ export class BidCommand implements Command {
         }
 
         // Set new highest bid
-        await StateUtils.setHighestBid(intr.user.id, bidAmount);
+        await StateUtils.setHighestBid(captainDiscId, bidAmount);
 
         const newHighestBidObject = await StateUtils.getHighestBidObject();
         const captainOsuName = newHighestBidObject.bidderName;

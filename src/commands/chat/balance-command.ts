@@ -19,21 +19,25 @@ export class BalanceCommand implements Command {
             return;
         }
 
-        // Check if user is captain
-        const isCaptain = StateUtils.isCaptainFromDisc(intr.user.id);
+        // Check if player is captain
+        const isCaptain = await StateUtils.isCaptainFromDisc(intr.user.id);
+        const isProxyCaptain = await StateUtils.isProxyCaptainFromDisc(intr.user.id);
 
-        if (!isCaptain) {
+        let captainDiscId: string = intr.user.id;
+        if (isProxyCaptain) {
+            captainDiscId = await StateUtils.getCaptainIdFromProxyDisc(intr.user.id);
+        }
+
+        if (!isCaptain && !isProxyCaptain) {
             const notCaptainEmbed = new EmbedBuilder()
-                .setTitle('Not captain')
-                .setDescription(
-                    `You are currently not listed as a captain. If you believe this is a mistake, please contact the hosts.`
-                )
-                .setColor(RandomUtils.getDangerColor());
+                .setTitle('Not a captain')
+                .setDescription(`Only captains can bid on players.`)
+                .setColor(RandomUtils.getSecondaryColor());
             await InteractionUtils.send(intr, notCaptainEmbed);
             return;
         }
 
-        const balance = await StateUtils.GetBalance(intr.user.id);
+        const balance = await StateUtils.GetBalance(captainDiscId);
         const balanceEmbed = new EmbedBuilder()
             .setTitle('Balance')
             .setDescription(`Your current balance is **${balance}** points.`)

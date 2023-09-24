@@ -77,12 +77,6 @@ export class StateUtils {
 
     private static async getCaptainsFromConfig(): Promise<void> {
         Object.keys(CaptainConfig).forEach(captainId => {
-            let proxyDiscId = undefined;
-
-            if (CaptainConfig[captainId]?.proxyDiscId !== undefined) {
-                proxyDiscId = CaptainConfig[captainId].proxyDiscId;
-            }
-
             this.Captains[captainId] = {
                 name: this.CaptainUsernameMap[CaptainConfig[captainId].osuId],
                 teamname: CaptainConfig[captainId].teamname,
@@ -90,7 +84,7 @@ export class StateUtils {
                 osuId: CaptainConfig[captainId].osuId,
                 teammembers: [],
                 teamvalue: 0,
-                proxyDiscId: proxyDiscId,
+                proxyDiscId: CaptainConfig[captainId].proxyDiscId,
             };
         });
     }
@@ -186,6 +180,16 @@ export class StateUtils {
         }
 
         return false;
+    }
+
+    public static async getCaptainIdFromProxyDisc(discordId: string): Promise<string> {
+        for (const id in this.Captains) {
+            if (this.Captains[id].proxyDiscId === discordId) {
+                return id;
+            }
+        }
+
+        return undefined;
     }
 
     public static async getCaptainStateFromDisc(captainId: string): Promise<Partial<CaptainState>> {
