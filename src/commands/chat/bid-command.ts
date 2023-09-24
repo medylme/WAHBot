@@ -181,27 +181,19 @@ export class BidCommand implements Command {
         const newLowerBound = newHighestBidObject.bid + AuctionConfig.minBidIncrement;
         const newUpperbound = newHighestBidObject.bid + AuctionConfig.maxBidIncrement;
 
+        let bidderIdentity = `**${captainOsuName}** (${captainDiscordName})`;
         if (isProxyCaptain) {
             const proxyName = intr.user.toString();
-
-            // Send new highest bid message in thread
-            const highestBidEmbed = new EmbedBuilder()
-                .setTitle('New highest bid!')
-                .setDescription(
-                    `**${captainOsuName}** (Proxy: ${proxyName}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
-                )
-                .setColor(RandomUtils.getTertiaryColor());
-            await currentThread.send({ embeds: [highestBidEmbed] });
-        } else {
-            // Send new highest bid message in thread
-            const highestBidEmbed = new EmbedBuilder()
-                .setTitle('New highest bid!')
-                .setDescription(
-                    `**${captainOsuName}** (${captainDiscordName}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
-                )
-                .setColor(RandomUtils.getTertiaryColor());
-            await currentThread.send({ embeds: [highestBidEmbed] });
+            bidderIdentity = `**${captainOsuName}** (Proxy: ${proxyName})`;
         }
+
+        const highestBidEmbed = new EmbedBuilder()
+            .setTitle('New highest bid!')
+            .setDescription(
+                `${bidderIdentity} has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
+            )
+            .setColor(RandomUtils.getTertiaryColor());
+        await currentThread.send({ embeds: [highestBidEmbed] });
 
         // Reset bid timer
         const timeRemaining = await StateUtils.getTimeRemaining();
