@@ -94,7 +94,9 @@ export class StartAuctionCommand implements Command {
                 .setColor(RandomUtils.getPrimaryColor())
                 .setTitle(i == 0 ? 'Team Results' : 'Team Results *(continued)*')
                 .setDescription(
-                    i == 0 ? `Below are the teams that were created during the auction:` : ''
+                    i == 0
+                        ? `Below are the teams that were created during the auction. Note that these are provisional team names, meaning they can still be changed upon request of the captain!`
+                        : ''
                 )
                 .addFields(
                     auctionResultsArray
