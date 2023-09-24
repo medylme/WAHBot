@@ -341,7 +341,7 @@ ${eventsList.map(event => event).join('\n')}
             );
         }
 
-        await delay(3 * 1000);
+        await delay(5 * 1000);
         await thread.setArchived(true);
     }
 
