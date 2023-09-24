@@ -163,6 +163,9 @@ export class BidCommand implements Command {
         const captainOsuName = newHighestBidObject.bidderName;
         const captainDiscordName = intr.user.toString();
 
+        const newLowerBound = newHighestBidObject.bid + AuctionConfig.minBidIncrement;
+        const newUpperbound = newHighestBidObject.bid + AuctionConfig.maxBidIncrement;
+
         if (isProxyCaptain) {
             const proxyName = intr.user.toString();
 
@@ -170,7 +173,7 @@ export class BidCommand implements Command {
             const highestBidEmbed = new EmbedBuilder()
                 .setTitle('New highest bid!')
                 .setDescription(
-                    `**${captainOsuName}** [Proxy ${proxyName}] has set a new highest bid of **${bidAmount}**! \nTimer has been reset.`
+                    `**${captainOsuName}** [Proxy ${proxyName}] has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
                 )
                 .setColor(RandomUtils.getTertiaryColor());
             await currentThread.send({ embeds: [highestBidEmbed] });
@@ -179,7 +182,7 @@ export class BidCommand implements Command {
             const highestBidEmbed = new EmbedBuilder()
                 .setTitle('New highest bid!')
                 .setDescription(
-                    `**${captainOsuName}** (${captainDiscordName}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.`
+                    `**${captainOsuName}** (${captainDiscordName}) has set a new highest bid of **${bidAmount}**! \nTimer has been reset.\n\nValid higher bids: **${newLowerBound}** - **${newUpperbound}**`
                 )
                 .setColor(RandomUtils.getTertiaryColor());
             await currentThread.send({ embeds: [highestBidEmbed] });
