@@ -97,7 +97,7 @@ export const ChatCommandMetadata: {
         type: ApplicationCommandType.ChatInput,
         name: 'pauseauction',
         name_localizations: undefined,
-        description: 'Queue an ongoing auction to pause.',
+        description: 'Queue an ongoing auction to pause. WARNING: POTENTIALLY BUGGY!',
         description_localizations: undefined,
         dm_permission: false,
         default_member_permissions: '8',
