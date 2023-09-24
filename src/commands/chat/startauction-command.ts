@@ -912,8 +912,26 @@ ${eventsList.map(event => event).join('\n')}
                 resultsArray.push(';');
             }
 
+            const freeAgentList = await StateUtils.GetFreeAgentList();
+            let auctionExportedFreeAgents: PlayersList = {
+                1: [],
+                2: [],
+                3: [],
+                4: [],
+            };
+            for (const playerId of freeAgentList) {
+                let tier: number;
+                for (const tierKey in PlayersData) {
+                    if (PlayersData[tierKey].includes(Number(playerId))) {
+                        tier = Number(tierKey);
+                    }
+                }
+
+                // add to tier
+                auctionExportedFreeAgents[tier].push(Number(playerId));
+            }
+
             const auctionExportedStats = await StateUtils.GetAuctionStats();
-            const auctionExportedFreeAgents = await StateUtils.GetFreeAgentList();
             const exportedFile = {
                 teams: resultsArray,
                 teamCosts: {
