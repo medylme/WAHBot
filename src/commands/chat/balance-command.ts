@@ -24,8 +24,12 @@ export class BalanceCommand implements Command {
         const isProxyCaptain = await StateUtils.isProxyCaptainFromDisc(intr.user.id);
 
         let captainDiscId: string = intr.user.id;
+        let proxyFooterText: string;
         if (isProxyCaptain) {
             captainDiscId = await StateUtils.getCaptainIdFromProxyDisc(intr.user.id);
+            const captainObject = await StateUtils.getCaptainStateFromDisc(captainDiscId);
+            const captainName = captainObject.name;
+            proxyFooterText = `You are acting on behalf of ${captainName} as a proxy.`;
         }
 
         if (!isCaptain && !isProxyCaptain) {
@@ -42,6 +46,13 @@ export class BalanceCommand implements Command {
             .setTitle('Balance')
             .setDescription(`Your current balance is **${balance}**.`)
             .setColor(RandomUtils.getSuccessColor());
+
+        if (isProxyCaptain) {
+            balanceEmbed.setFooter({
+                text: proxyFooterText,
+            });
+        }
+
         await InteractionUtils.send(intr, balanceEmbed);
     }
 }

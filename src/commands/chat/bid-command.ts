@@ -37,8 +37,12 @@ export class BidCommand implements Command {
         const isProxyCaptain = await StateUtils.isProxyCaptainFromDisc(intr.user.id);
 
         let captainDiscId: string = intr.user.id;
+        let proxyFooterText: string;
         if (isProxyCaptain) {
             captainDiscId = await StateUtils.getCaptainIdFromProxyDisc(intr.user.id);
+            const captainObject = await StateUtils.getCaptainStateFromDisc(captainDiscId);
+            const captainName = captainObject.name;
+            proxyFooterText = `You are acting on behalf of ${captainName} as a proxy.`;
         }
 
         if (!isCaptain && !isProxyCaptain) {
@@ -66,6 +70,13 @@ export class BidCommand implements Command {
                 .setTitle('Bidding not active')
                 .setDescription(`No player is currently being sold.`)
                 .setColor(RandomUtils.getSecondaryColor());
+
+            if (isProxyCaptain) {
+                biddingNotActiveEmbed.setFooter({
+                    text: proxyFooterText,
+                });
+            }
+
             await InteractionUtils.send(intr, biddingNotActiveEmbed);
             return;
         }
@@ -80,6 +91,13 @@ export class BidCommand implements Command {
                     `Your team is already full (${maxTeamSize} players)! You cannot get any more players through the auction.`
                 )
                 .setColor(RandomUtils.getDangerColor());
+
+            if (isProxyCaptain) {
+                teamFullEmbed.setFooter({
+                    text: proxyFooterText,
+                });
+            }
+
             await InteractionUtils.send(intr, teamFullEmbed);
             return;
         }
@@ -92,6 +110,13 @@ export class BidCommand implements Command {
                     `You cannot place **any** bid lower than **${AuctionConfig.minBid}**.`
                 )
                 .setColor(RandomUtils.getSecondaryColor());
+
+            if (isProxyCaptain) {
+                minBidNotReachedEmbed.setFooter({
+                    text: proxyFooterText,
+                });
+            }
+
             await InteractionUtils.send(intr, minBidNotReachedEmbed);
             return;
         }
@@ -102,6 +127,13 @@ export class BidCommand implements Command {
                 .setTitle('Maximum bid exceeded')
                 .setDescription(`Bids are hard-capped at **${AuctionConfig.maxBid}**.`)
                 .setColor(RandomUtils.getSecondaryColor());
+
+            if (isProxyCaptain) {
+                maxBidExceededEmbed.setFooter({
+                    text: proxyFooterText,
+                });
+            }
+
             await InteractionUtils.send(intr, maxBidExceededEmbed);
             return;
         }
@@ -116,6 +148,13 @@ export class BidCommand implements Command {
                         `You are already the highest bidder with a bid of **${currentHighestBidObject.bid}**.`
                     )
                     .setColor(RandomUtils.getSecondaryColor());
+
+                if (isProxyCaptain) {
+                    alreadyHighestBidderEmbed.setFooter({
+                        text: proxyFooterText,
+                    });
+                }
+
                 await InteractionUtils.send(intr, alreadyHighestBidderEmbed);
                 return;
             }
@@ -131,6 +170,13 @@ export class BidCommand implements Command {
                     `Unfortunately, you do not have enough balance to place a bid of **${bidAmount}** (your current balance is **${captainBalance}**).`
                 )
                 .setColor(RandomUtils.getSecondaryColor());
+
+            if (isProxyCaptain) {
+                notEnoughBalanceEmbed.setFooter({
+                    text: proxyFooterText,
+                });
+            }
+
             await InteractionUtils.send(intr, notEnoughBalanceEmbed);
             return;
         }
@@ -141,7 +187,7 @@ export class BidCommand implements Command {
         const currentHighestBid = await StateUtils.getHighestBid();
         const minBid = AuctionConfig.minBid;
 
-        // - Lower bound threshold (only applies after initial bid)
+        // - Lower bound threshold (onFly applies after initial bid)
         if (currentHighestBid > minBid) {
             const minIncrement = AuctionConfig.minBidIncrement;
             let lowerBound = currentHighestBid + minIncrement;
@@ -150,7 +196,14 @@ export class BidCommand implements Command {
                     .setTitle('Bid too low')
                     .setDescription(
                         `Your bid of **${bidAmount}** must exceed the min increment of **${minIncrement}**; You need to bid **${lowerBound}** or higher!`
-                    );
+                    )
+                    .setColor(RandomUtils.getSecondaryColor());
+
+                if (isProxyCaptain) {
+                    notHighestBidEmbed.setFooter({
+                        text: proxyFooterText,
+                    });
+                }
 
                 await InteractionUtils.send(intr, notHighestBidEmbed);
                 return;
@@ -167,6 +220,13 @@ export class BidCommand implements Command {
                     `Your bid of **${bidAmount}** exceeds the max increment of **${maxIncrement}**; You need to bid **${upperBound}** or lower!`
                 )
                 .setColor(RandomUtils.getSecondaryColor());
+
+            if (isProxyCaptain) {
+                maxBidExceededEmbed.setFooter({
+                    text: proxyFooterText,
+                });
+            }
+
             await InteractionUtils.send(intr, maxBidExceededEmbed);
             return;
         }
