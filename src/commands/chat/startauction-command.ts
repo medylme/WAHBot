@@ -307,7 +307,7 @@ ${eventsList.map(event => event).join('\n')}
         }!`;
 
         const highestBidObject = await StateUtils.getHighestBidObject();
-        if (highestBidObject == undefined) {
+        if (highestBidObject === undefined) {
             const noBidsEmbed = new EmbedBuilder()
                 .setColor(RandomUtils.getSecondaryColor())
                 .setTitle('No bids!')

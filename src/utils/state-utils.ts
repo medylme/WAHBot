@@ -259,13 +259,17 @@ export class StateUtils {
         bidderId: string;
         bidderName: string;
     }> {
-        const captainName = this.Captains[this.AuctionState.highestBidderId].name;
+        try {
+            const captainName = this.Captains[this.AuctionState.highestBidderId].name;
 
-        return {
-            bid: this.AuctionState.highestBid,
-            bidderId: this.AuctionState.highestBidderId,
-            bidderName: captainName,
-        };
+            return {
+                bid: this.AuctionState.highestBid,
+                bidderId: this.AuctionState.highestBidderId,
+                bidderName: captainName,
+            };
+        } catch (e) {
+            return undefined;
+        }
     }
 
     public static async setHighestBid(captainId: string | number, bid: number): Promise<void> {
