@@ -1,14 +1,15 @@
 {
     "auctionDuration": 15,
-    "resetDuration": 10,
+    "resetDuration": 15,
     "minBid": 50,
     "maxBid": 13500,
     "minBidIncrement": 50,
     "maxBidIncrement": 2000,
     "maxTeamSize": 10,
-    "AIReport": true,
+    "AIReport": false,
     "startingBalance": 20000,
     "shufflePlayers": true,
     "tierOrder": [4, 3, 2, 1],
-    "threadPrefix": "WAH2023 Test Run 2"
+    "trialRunEnabled": true,
+    "threadPrefix": "WAH 2023 Auction"
 }

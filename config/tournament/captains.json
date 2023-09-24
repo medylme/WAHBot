@@ -1,47 +1,50 @@
 {
     "226372615491682306": {
         "name": "Ezius",
-        "teamname": "Team 1",
-        "osuId": 1861823
+        "teamname": "Full Of Soup",
+        "osuId": 1861823,
+        "proxyDiscId": "112335198741356544"
     },
     "509795341617332225": {
         "name": "Bingo6",
-        "teamname": "Team 2",
+        "teamname": "Doodle Jump",
         "osuId": 14054383
     },
     "254591058854412288": {
         "name": "Kosiarek",
-        "teamname": "Team 3",
+        "teamname": "boomers",
         "osuId": 9086565
     },
     "320239663820439553": {
         "name": "levi-",
-        "teamname": "Team 4",
+        "teamname": "bluesmurfcat",
         "osuId": 14684430
     },
     "509192996516790272": {
         "name": "P r a h",
-        "teamname": "Team 5",
+        "teamname": "RAMSING",
         "osuId": 10509043
     },
     "177498382376370177": {
         "name": "Read Horimiya",
-        "teamname": "Team 6",
-        "osuId": 14963905
+        "teamname": "YAHOOO!!!",
+        "osuId": 14963905,
+        "proxyDiscId": "337286442638245890"
     },
     "403451194447626241": {
         "name": "cnuy",
-        "teamname": "Team 7",
+        "teamname": "Murasame",
         "osuId": 11238108
     },
     "307606430465130506": {
         "name": "Tutka",
         "teamname": "Team 8",
-        "osuId": 8170022
+        "osuId": 8170022,
+        "proxyDiscId": "669943352233426963"
     },
     "356781869020217344": {
         "name": "BlankTap",
-        "teamname": "Team 9",
+        "teamname": "tezi",
         "osuId": 10137131
     },
     "422488098690301954": {
@@ -51,7 +54,7 @@
     },
     "369854184574418944": {
         "name": "gwk",
-        "teamname": "Team 11",
+        "teamname": "!bid fieryrage 13500",
         "osuId": 14255332
     },
     "852624988540239924": {
@@ -61,7 +64,7 @@
     },
     "705752927435751474": {
         "name": "tezi",
-        "teamname": "Team 13",
+        "teamname": "BlankTap",
         "osuId": 20988374
     },
     "301019823071035423": {
@@ -71,12 +74,13 @@
     },
     "378198246197297173": {
         "name": "mort",
-        "teamname": "Team 15",
-        "osuId": 13627426
+        "teamname": ":0",
+        "osuId": 13627426,
+        "proxyDiscId": "375161618063163393"
     },
     "330013117926998019": {
         "name": "Luqkay",
-        "teamname": "Team 16",
+        "teamname": "Ophiz and I Will Not Be Changing It",
         "osuId": 16538717
     }
 }
