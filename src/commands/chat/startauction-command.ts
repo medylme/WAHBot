@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import util from 'node:util';
 
 import { EventData } from '../../models/internal-models.js';
+import { PlayersList, ResumeData, TeamMembers } from '../../models/state-models.js';
 import { Logger } from '../../services/logger.js';
 import {
     InteractionUtils,
@@ -18,7 +19,6 @@ import {
     StateUtils,
     TournamentConfigUtils,
 } from '../../utils/index.js';
-import { PlayersList, ResumeData, TeamMembers } from '../../utils/state-utils.js';
 import { Command, CommandDeferType } from '../index.js';
 
 const writeFileAsync = util.promisify(fs.writeFile);
