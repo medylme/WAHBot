@@ -215,7 +215,7 @@ ${eventsList.map(event => event).join('\n')}
         const nextUpEmbed = new EmbedBuilder()
             .setColor(RandomUtils.getPrimaryColor())
             .setTitle(username)
-            .setDescription('Use `/bid [amount]` to bid on this player!')
+            .setDescription('The bidding will start in a few seconds...')
             .setURL(`https://osu.ppy.sh/users/${currentPlayer}`)
             .setAuthor({
                 name: `${nextUpEmbedDesc}`,
@@ -245,6 +245,7 @@ ${eventsList.map(event => event).join('\n')}
         const bidsOpenEmbed = new EmbedBuilder()
             .setColor(RandomUtils.getSuccessColor())
             .setTitle(`Bids are open!`)
+            .setDescription('Use `/bid [amount]` to bid on this player!')
             .addFields(
                 {
                     name: 'Min initial bid',
