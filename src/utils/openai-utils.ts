@@ -40,7 +40,7 @@ export class OpenAIUtils {
     }
 
     public static async GenerateReport(systemPrompt: string, userPrompt: object): Promise<string> {
-        const MODEL = 'gpt-3.5-turbo-16k'; // 'gpt-4' - best but slow | 'gpt-3.5-turbo' - faster | 'gpt-3.5-turbo-16k' - maybe an option???
+        const MODEL = 'gpt-3.5-turbo-16k'; // 'gpt-4' | 'gpt-3.5-turbo' | 'gpt-3.5-turbo-16k'
 
         Logger.debug(`Prompting ${MODEL} with: `, userPrompt);
 

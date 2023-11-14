@@ -93,25 +93,24 @@ export class TournamentConfigUtils {
     private static async checkApiKeys(): Promise<void> {
         const osuApiKey = this.ApiKeyConfig.osuApiKey;
         const openaiApiKey = this.ApiKeyConfig.openaiApiKey;
+        const aiEnabled = this.AuctionConfig.AIReport;
 
         if (!osuApiKey) {
             throw new Error('osu! API key (v1) is missing!');
         }
-
-        if (!openaiApiKey) {
-            throw new Error('OpenAI API key is missing!');
-        }
-
-        // Test osu! API
         const osuApiPingRes = await OsuApiUtils.pingApi();
         if (!osuApiPingRes) {
             throw new Error('Something went wrong while fetching from the osu! endpoint!');
         }
 
-        // Test OpenAI
-        const openaiPingRes = await OpenAIUtils.pingApi();
-        if (!openaiPingRes) {
-            throw new Error('Something went wrong while fetching from the OpenAI endpoint!');
+        if (aiEnabled) {
+            if (!openaiApiKey) {
+                throw new Error('OpenAI API key is missing!');
+            }
+            const openaiPingRes = await OpenAIUtils.pingApi();
+            if (!openaiPingRes) {
+                throw new Error('Something went wrong while fetching from the OpenAI endpoint!');
+            }
         }
     }
 

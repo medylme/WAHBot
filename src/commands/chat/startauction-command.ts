@@ -1,3 +1,7 @@
+// warning: this code SUCKS. there's many things i'd do differently if i were to rewrite this.
+// mainly implementing a buffer system for the bids (to prevent race conditions), and cleaner auction state handling (ESPECIALLY pausing/resuming).
+// - dyl
+
 import {
     ChatInputCommandInteraction,
     EmbedBuilder,
