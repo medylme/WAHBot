@@ -1,6 +1,11 @@
 # WAH 2023 - WAHBot
 
-Discord Bot for the [WAH 2023 osu! tourney](https://osu.ppy.sh/community/forums/topics/1808443?n=1). (Mainly) handles the auction system.
+Discord Bot for the [WAH 2023 osu! tourney](https://osu.ppy.sh/community/forums/topics/1808443?n=1). Mainly handled the auction system.
+
+This tourney has since concluded (and with it this repository), but I've made it public intended to be used as a rough reference.
+
+## Config Files
+A good handful of config files that need to be set up exist in `/config` and `config/tournament`. Example files are provided.
 
 ## Package Commands
 ### Main
